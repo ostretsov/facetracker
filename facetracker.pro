@@ -13,7 +13,10 @@ SOURCES += main.cpp \
     systemtrayicon/asystemtrayicon.cpp \
     systemtrayicon/auniformsystemtrayicon.cpp \
     acapturethread.cpp \
-    widgets/aimagewidget.cpp
+    widgets/aimagewidget.cpp \
+    database/adatabasecontroller.cpp \
+    database/asqltablecontroller.cpp \
+    database/atablecontroller.cpp
 
 HEADERS += \
     helpers/asettingshelper.h \
@@ -22,7 +25,10 @@ HEADERS += \
     systemtrayicon/asystemtrayicon.h \
     systemtrayicon/auniformsystemtrayicon.h \
     acapturethread.h \
-    widgets/aimagewidget.h
+    widgets/aimagewidget.h \
+    database/adatabasecontroller.h \
+    database/asqltablecontroller.h \
+    database/atablecontroller.h
 
 unix {
     INCLUDEPATH += /usr/include/libappindicator-0.1 \
