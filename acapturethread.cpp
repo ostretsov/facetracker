@@ -156,7 +156,7 @@ void ACaptureThread::run() {
             QImage img(src_mat.data, src_mat.cols, src_mat.rows
                 , src_mat.step, QImage::Format_RGB888);
 
-            emit captured(img.convertToFormat(
+            emit captured(img.rgbSwapped().convertToFormat(
                 QImage::Format_ARGB32_Premultiplied));
         }
 
@@ -171,7 +171,7 @@ void ACaptureThread::run() {
                 QImage img(roi_mat.data, roi_mat.cols, roi_mat.rows
                     , roi_mat.step, QImage::Format_RGB888);
 
-                emit detected(img.convertToFormat(
+                emit detected(img.rgbSwapped().convertToFormat(
                     QImage::Format_ARGB32_Premultiplied));
             }
         }
