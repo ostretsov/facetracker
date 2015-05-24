@@ -49,8 +49,16 @@ void AImageWidget::updateImage(const QImage &image) {
     if(image.isNull()) _image = QImage();
     else _image = image.copy();
 
+    _roi = QRect();
+
     update();
 }
+
+
+// ========================================================================== //
+// Update roi.
+// ========================================================================== //
+void AImageWidget::updateRoi(const QRect &roi) {_roi = roi;}
 
 
 // ========================================================================== //
@@ -92,6 +100,32 @@ void AImageWidget::paintEvent(QPaintEvent *event) {
     }
 
     painter.drawImage(_dst_rc, _image, _image.rect());
+
+    if(!_roi.isNull()) {
+        QRect rect = _roi;
+
+        QTransform trans_scale
+            = QTransform::fromScale(
+                (qreal)_dst_rc.width()/(qreal)_image.width(),
+                (qreal)_dst_rc.height()/(qreal)_image.height());
+
+        rect = trans_scale.mapRect(rect);
+
+        QTransform trans_translate
+            = QTransform::fromTranslate((this->width()-_dst_rc.width())/2
+                , (this->height()-_dst_rc.height())/2);
+
+        rect = trans_translate.mapRect(rect);
+
+        QPen pen;
+        pen.setCosmetic(true);
+        pen.setColor(Qt::green);
+
+        painter.save();
+        painter.setPen(pen);
+        painter.drawRect(rect);
+        painter.restore();
+    }
 
     event->accept();
 }

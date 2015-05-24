@@ -31,6 +31,9 @@ class AImageWidget : public QWidget {
         //! Update image.
         void updateImage(const QImage &image);
 
+        //! Update roi.
+        void updateRoi(const QRect &roi);
+
     protected:
         //! Paint event.
         virtual void paintEvent(QPaintEvent *event);
@@ -41,7 +44,7 @@ class AImageWidget : public QWidget {
     private:
         QImage _image;
 
-        QRect _dst_rc;
+        QRect _dst_rc, _roi;
 
 };
 
