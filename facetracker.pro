@@ -8,11 +8,13 @@ TRANSLATIONS = facetracker_ru.ts
 
 SOURCES += main.cpp \
     helpers/asettingshelper.cpp \
-    aservicecontroller.cpp
+    aservicecontroller.cpp \
+    aservicemetatypecontroller.cpp
 
 HEADERS += \
     helpers/asettingshelper.h \
-    aservicecontroller.h
+    aservicecontroller.h \
+    aservicemetatypecontroller.h
 
 unix {
     INCLUDEPATH += /usr/include/libappindicator-0.1 \
