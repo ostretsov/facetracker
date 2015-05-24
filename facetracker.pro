@@ -12,7 +12,8 @@ SOURCES += main.cpp \
     aservicemetatypecontroller.cpp \
     systemtrayicon/asystemtrayicon.cpp \
     systemtrayicon/auniformsystemtrayicon.cpp \
-    acapturethread.cpp
+    acapturethread.cpp \
+    widgets/aimagewidget.cpp
 
 HEADERS += \
     helpers/asettingshelper.h \
@@ -20,7 +21,8 @@ HEADERS += \
     aservicemetatypecontroller.h \
     systemtrayicon/asystemtrayicon.h \
     systemtrayicon/auniformsystemtrayicon.h \
-    acapturethread.h
+    acapturethread.h \
+    widgets/aimagewidget.h
 
 unix {
     INCLUDEPATH += /usr/include/libappindicator-0.1 \
