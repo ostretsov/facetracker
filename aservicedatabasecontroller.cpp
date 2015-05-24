@@ -39,15 +39,17 @@ ATableController *AServiceDatabaseController::rss() const {
 // ========================================================================== //
 bool AServiceDatabaseController::openConnection() {
     if(ADatabaseController::openConnection()) {
-        QList<ASqlTableController*> ctrls;
-        ctrls << new AMessagesSqlTableController(this)
-            << new AStatisticSqlTableController(this)
-            << new ARssSqlTableController(this);
+        _messages_tbl_ctrl = new AMessagesSqlTableController(this);
+        _messages_tbl_ctrl->setConnectionName(connectionName());
+        if(!_messages_tbl_ctrl->select()) {closeConnection(); return false;}
 
-        foreach(ASqlTableController *ctrl, ctrls) {
-            ctrl->setConnectionName(connectionName());
-            if(!ctrl->select()) {closeConnection(); return false;}
-        }
+        _statistic_tbl_ctrl = new AStatisticSqlTableController(this);
+        _statistic_tbl_ctrl->setConnectionName(connectionName());
+        if(!_statistic_tbl_ctrl->select()) {closeConnection(); return false;}
+
+        _rss_tbl_ctrl = new ARssSqlTableController(this);
+        _rss_tbl_ctrl->setConnectionName(connectionName());
+        if(!_rss_tbl_ctrl->select()) {closeConnection(); return false;}
 
         return true;
     }
