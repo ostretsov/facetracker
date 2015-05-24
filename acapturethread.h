@@ -11,7 +11,7 @@ class ACaptureThread : public QThread {
         void captured();
         void captured(const QImage &img);
 
-        void detected();
+        void detected(const QRect &roi);
         void detected(const QImage &img);
 
     public:

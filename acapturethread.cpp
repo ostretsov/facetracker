@@ -153,9 +153,6 @@ void ACaptureThread::run() {
 
         if(isHiddenCapture()) emit captured();
         else {
-            if(rois.size() > 0)
-                cv::rectangle(src_mat, rois.at(0), cv::Scalar(0,255,0), 1);
-
             QImage img(src_mat.data, src_mat.cols, src_mat.rows
                 , src_mat.step, QImage::Format_RGB888);
 
@@ -164,8 +161,11 @@ void ACaptureThread::run() {
         }
 
         if(rois.size() > 0) {
-            if(isHiddenDetect()) emit detected();
-            else {
+            if(isHiddenDetect()) {
+                const cv::Rect &roi = rois.at(0);
+                emit detected(QRect(roi.x,roi.y,roi.width,roi.height));
+
+            } else {
                 cv::Mat roi_mat = src_mat(rois.at(0));
 
                 QImage img(roi_mat.data, roi_mat.cols, roi_mat.rows
