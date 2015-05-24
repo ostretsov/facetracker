@@ -70,4 +70,5 @@ win32 {
 }
 
 RESOURCES += \
-    classifiers.qrc
+    classifiers.qrc \
+    images.qrc
