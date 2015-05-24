@@ -3,6 +3,9 @@
 
 #include <QtCore/QObject>
 
+class AServiceDatabaseController;
+class ATableController;
+
 class AServiceController : public QObject {
     Q_OBJECT
 
@@ -15,6 +18,15 @@ class AServiceController : public QObject {
 
         //! Destructor.
         virtual ~AServiceController() {}
+
+        //! Get database is opened.
+        bool isDatabaseOpened() const;
+
+        //! Get messages.
+        ATableController *messages() const;
+
+    private:
+        AServiceDatabaseController *_service_db_ctrl;
 
 };
 
