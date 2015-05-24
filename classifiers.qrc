@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>classifiers/haar_frontalface_alt_tree.xml</file>
+    </qresource>
+</RCC>

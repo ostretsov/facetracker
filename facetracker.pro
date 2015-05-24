@@ -52,3 +52,6 @@ win32 {
         -lopencv_videoio300 \
         -lopencv_highgui300
 }
+
+RESOURCES += \
+    classifiers.qrc
