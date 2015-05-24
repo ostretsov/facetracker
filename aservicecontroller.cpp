@@ -10,6 +10,7 @@
 #include "aservicecontroller.h"
 #include "aservicemetatypecontroller.h"
 #include "aservicedatabasecontroller.h"
+#include "asettingsdialog.h"
 
 Q_GLOBAL_STATIC(AServiceController, _g_service_ctrl)
 
@@ -114,6 +115,12 @@ AServiceController::AServiceController(QObject *parent)
         connect(qApp, SIGNAL(aboutToQuit())
             , _service_db_ctrl, SLOT(closeConnection()));
     }
+
+// TODO: for tests only, remove later.
+ASettingsDialog dlg;
+dlg.exec();
+QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
+//
 }
 
 
