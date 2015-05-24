@@ -176,4 +176,6 @@ void ACaptureThread::run() {
             }
         }
     }
+
+    if(!isHiddenCapture()) emit captured(QImage());
 }
