@@ -26,6 +26,12 @@ class AServiceController : public QObject {
         //! Get messages.
         ATableController *messages() const;
 
+        //! Get statistic.
+        ATableController *statistic() const;
+
+        //! Get rss.
+        ATableController *rss() const;
+
     private:
         AServiceDatabaseController *_service_db_ctrl;
 

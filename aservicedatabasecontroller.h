@@ -5,7 +5,9 @@
 
 #include "database/adatabasecontroller.h"
 
+class AStatisticSqlTableController;
 class AMessagesSqlTableController;
+class ARssSqlTableController;
 class ATableController;
 
 class AServiceDatabaseController : public ADatabaseController {
@@ -21,6 +23,12 @@ class AServiceDatabaseController : public ADatabaseController {
         //! Get messages.
         ATableController *messages() const;
 
+        //! Get statistic.
+        ATableController *statistic() const;
+
+        //! Get rss.
+        ATableController *rss() const;
+
     public slots:
         //! Open connection.
         virtual bool openConnection();
@@ -30,6 +38,10 @@ class AServiceDatabaseController : public ADatabaseController {
 
     private:
         QPointer<AMessagesSqlTableController> _messages_tbl_ctrl;
+
+        QPointer<AStatisticSqlTableController> _statistic_tbl_ctrl;
+
+        QPointer<ARssSqlTableController> _rss_tbl_ctrl;
 
 };
 

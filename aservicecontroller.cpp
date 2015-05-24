@@ -146,6 +146,22 @@ ATableController *AServiceController::messages() const {
 
 
 // ========================================================================== //
+// Get statistic.
+// ========================================================================== //
+ATableController *AServiceController::statistic() const {
+    return _service_db_ctrl->statistic();
+}
+
+
+// ========================================================================== //
+// Get rss.
+// ========================================================================== //
+ATableController *AServiceController::rss() const {
+    return _service_db_ctrl->rss();
+}
+
+
+// ========================================================================== //
 // Create tray.
 // ========================================================================== //
 void AServiceController::createTray() {
