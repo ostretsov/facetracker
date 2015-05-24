@@ -5,15 +5,22 @@
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QLabel>
 
+#include "widgets/aimagewidget.h"
+
 #include "helpers/asettingshelper.h"
 
 #include "asettingsdialog.h"
+#include "acapturethread.h"
 
 // ========================================================================== //
 // Constructor.
 // ========================================================================== //
-ASettingsDialog::ASettingsDialog(QWidget *parent) : QDialog(parent) {
+ASettingsDialog::ASettingsDialog(QWidget *parent)
+    : QDialog(parent), _capture_thread(new ACaptureThread(this)) {
+
     setWindowTitle(ASettingsDialog::tr("Settings"));
+
+    _capture_thread->setCaptureHidden(false);
 
     QLabel *lang_label = new QLabel(this);
     lang_label->setText(ASettingsDialog::tr("Language:"));
@@ -47,14 +54,17 @@ ASettingsDialog::ASettingsDialog(QWidget *parent) : QDialog(parent) {
     QPushButton *login_pbut = new QPushButton(this);
     login_pbut->setText(ASettingsDialog::tr("Login"));
 
-    QPushButton *test_pbut = new QPushButton(this);
-    test_pbut->setText(ASettingsDialog::tr("Test webcamera"));
-
     QLabel *statistic_label = new QLabel(this);
     statistic_label->setOpenExternalLinks(true);
     statistic_label->setText(
         ASettingsDialog::tr("Statistic available" \
         " <a href=\"http://google.ru\">at link</a>."));
+
+    AImageWidget *img_wdg = new AImageWidget(this);
+    connect(_capture_thread, SIGNAL(captured(const QImage&))
+        , img_wdg, SLOT(updateImage(const QImage&)));
+    connect(_capture_thread, SIGNAL(detected(const QRect&))
+        , img_wdg, SLOT(updateRoi(const QRect&)));
 
     QLabel *rss_label = new QLabel(this);
     rss_label->setOpenExternalLinks(true);
@@ -71,14 +81,26 @@ ASettingsDialog::ASettingsDialog(QWidget *parent) : QDialog(parent) {
     layout->addWidget(_duration_spbox, 3, 1, 1, 1);
     layout->addWidget(_register_label, 1, 3, 1, 1);
     layout->addWidget(login_pbut, 2, 3, 1, 1);
-    layout->addWidget(test_pbut, 4, 1, 1, 2);
-    layout->addWidget(statistic_label, 5, 1, 1, 2);
-    layout->addWidget(rss_label, 6, 1, 1, 3);
+    layout->addWidget(statistic_label, 4, 1, 1, 2);
+    layout->addWidget(img_wdg, 5, 0, 1, 4);
+    layout->addWidget(rss_label, 6, 0, 1, 4);
     layout->setColumnStretch(2,2);
 
     setLayout(layout);
 
     QMetaObject::invokeMethod(this, "loadSettings", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(_capture_thread, "start", Qt::QueuedConnection);
+}
+
+
+// ========================================================================== //
+// Destructor.
+// ========================================================================== //
+ASettingsDialog::~ASettingsDialog() {
+    if(_capture_thread->isRunning()) {
+        _capture_thread->requestInterruption();
+        _capture_thread->wait();
+    }
 }
 
 

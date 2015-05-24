@@ -122,9 +122,9 @@ AServiceController::AServiceController(QObject *parent)
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(shutdown()));
 
 // TODO: for tests only, remove later.
-//ASettingsDialog dlg;
-//dlg.exec();
-//QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
+ASettingsDialog dlg;
+dlg.exec();
+QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 //
 }
 

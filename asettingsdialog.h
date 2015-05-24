@@ -8,6 +8,8 @@ class QLineEdit;
 class QSpinBox;
 class QLabel;
 
+class ACaptureThread;
+
 class ASettingsDialog : public QDialog {
     Q_OBJECT
 
@@ -16,9 +18,11 @@ class ASettingsDialog : public QDialog {
         explicit ASettingsDialog(QWidget *parent = NULL);
 
         //! Destructor.
-        virtual ~ASettingsDialog() {}
+        virtual ~ASettingsDialog();
 
     private:
+        ACaptureThread *_capture_thread;
+
         QComboBox *_lang_cbox;
 
         QLineEdit *_user_ledit, *_pswd_ledit;
