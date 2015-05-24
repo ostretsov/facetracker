@@ -5,6 +5,7 @@
 
 class AServiceDatabaseController;
 class ATableController;
+class ASystemTrayIcon;
 
 class AServiceController : public QObject {
     Q_OBJECT
@@ -27,6 +28,15 @@ class AServiceController : public QObject {
 
     private:
         AServiceDatabaseController *_service_db_ctrl;
+
+        ASystemTrayIcon *_tray;
+
+        //! Create tray.
+        void createTray();
+
+    private slots:
+        //! Shutdown.
+        void shutdown();
 
 };
 

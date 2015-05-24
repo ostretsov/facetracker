@@ -5,7 +5,11 @@
 #include <QtCore/QFile>
 #include <QtCore/QDir>
 
+#include <QtWidgets/QMenu>
+
 #include "database/atablecontroller.h"
+
+#include "systemtrayicon/asystemtrayicon.h"
 
 #include "aservicecontroller.h"
 #include "aservicemetatypecontroller.h"
@@ -111,15 +115,16 @@ AServiceController::AServiceController(QObject *parent)
 
     AServiceMetatypeController::registerMetaTypes();
 
-    if(_service_db_ctrl->openConnection()) {
-        connect(qApp, SIGNAL(aboutToQuit())
-            , _service_db_ctrl, SLOT(closeConnection()));
-    }
+    _service_db_ctrl->openConnection();
+
+    createTray();
+
+    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(shutdown()));
 
 // TODO: for tests only, remove later.
-ASettingsDialog dlg;
-dlg.exec();
-QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
+//ASettingsDialog dlg;
+//dlg.exec();
+//QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 //
 }
 
@@ -137,4 +142,34 @@ bool AServiceController::isDatabaseOpened() const {
 // ========================================================================== //
 ATableController *AServiceController::messages() const {
     return _service_db_ctrl->messages();
+}
+
+
+// ========================================================================== //
+// Create tray.
+// ========================================================================== //
+void AServiceController::createTray() {
+    const QString app_name
+        = qApp->applicationName() + QLatin1String(" v")
+            + qApp->applicationVersion();
+
+    QMenu *tray_menu = new QMenu(app_name);
+    tray_menu->addAction(AServiceController::tr("Quit"), qApp, SLOT(quit()));
+
+    _tray = ASystemTrayIcon::create(this);
+    _tray->setIcon(QIcon(QStringLiteral(":/images/gray.png")));
+    _tray->setContextMenu(tray_menu);
+    _tray->show();
+}
+
+
+// ========================================================================== //
+// Shutdown.
+// ========================================================================== //
+void AServiceController::shutdown() {
+    if(_tray && _tray->contextMenu())
+        delete _tray->contextMenu();
+
+    if(_service_db_ctrl->isOpened())
+        _service_db_ctrl->closeConnection();
 }
