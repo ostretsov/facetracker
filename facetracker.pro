@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     database/atablecontroller.cpp \
     amessagessqltablecontroller.cpp \
     aservicedatabasecontroller.cpp \
-    asettingsdialog.cpp
+    asettingsdialog.cpp \
+    astatisticsqltablecontroller.cpp
 
 HEADERS += \
     helpers/asettingshelper.h \
@@ -34,7 +35,8 @@ HEADERS += \
     database/atablecontroller.h \
     amessagessqltablecontroller.h \
     aservicedatabasecontroller.h \
-    asettingsdialog.h
+    asettingsdialog.h \
+    astatisticsqltablecontroller.h
 
 unix {
     INCLUDEPATH += /usr/include/libappindicator-0.1 \
