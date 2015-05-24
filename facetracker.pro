@@ -16,7 +16,9 @@ SOURCES += main.cpp \
     widgets/aimagewidget.cpp \
     database/adatabasecontroller.cpp \
     database/asqltablecontroller.cpp \
-    database/atablecontroller.cpp
+    database/atablecontroller.cpp \
+    amessagessqltablecontroller.cpp \
+    aservicedatabasecontroller.cpp
 
 HEADERS += \
     helpers/asettingshelper.h \
@@ -28,7 +30,9 @@ HEADERS += \
     widgets/aimagewidget.h \
     database/adatabasecontroller.h \
     database/asqltablecontroller.h \
-    database/atablecontroller.h
+    database/atablecontroller.h \
+    amessagessqltablecontroller.h \
+    aservicedatabasecontroller.h
 
 unix {
     INCLUDEPATH += /usr/include/libappindicator-0.1 \
