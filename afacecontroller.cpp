@@ -45,6 +45,10 @@ AFaceController::AFaceController(QObject *parent) : QObject(parent) {
 
     initial_state->addTransition(_capture
         , SIGNAL(started()), detection1_state);
+    initial_state->addTransition(_capture
+        , SIGNAL(finished()), fail_state);
+    initial_state->addTransition(_timer
+        , SIGNAL(timeout()), fail_state);
 
     detection1_state->addTransition(_capture
         , SIGNAL(detected(const QRect&)), detection2_state);
