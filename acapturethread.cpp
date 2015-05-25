@@ -113,7 +113,9 @@ void ACaptureThread::run() {
             << qPrintable(ACaptureThread::tr("Capturing with device %1 failed!")
                 .arg(dev_idx));
 
-        emit failed(); return;
+        QMetaObject::invokeMethod(this, "failed", Qt::QueuedConnection);
+
+        return;
     }
 
     _mutex.lock();
@@ -125,7 +127,9 @@ void ACaptureThread::run() {
         QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "app").warning()
             << qPrintable(ACaptureThread::tr("Can not create temporary file!"));
 
-        emit failed(); return;
+        QMetaObject::invokeMethod(this, "failed", Qt::QueuedConnection);
+
+        return;
     }
 
     const QString dst_fname = QDir::toNativeSeparators(dst_file->fileName());
@@ -135,7 +139,11 @@ void ACaptureThread::run() {
         QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "app").warning()
             << qPrintable(ACaptureThread::tr("Load classifier failed!"));
 
-        emit failed(); delete dst_file; return;
+        delete dst_file;
+
+        QMetaObject::invokeMethod(this, "failed", Qt::QueuedConnection);
+
+        return;
     }
 
     delete dst_file;
@@ -169,19 +177,26 @@ void ACaptureThread::run() {
         classifier.detectMultiScale(gry_mat, rois, 1.1, 3, 0
             , cv::Size(hrz_min,vrt_min), cv::Size(hrz_max,vrt_max));
 
-        if(isHiddenCapture()) emit captured();
-        else {
+        if(isHiddenCapture()) {
+            QMetaObject::invokeMethod(this, "captured", Qt::QueuedConnection);
+
+        } else {
             QImage img(src_mat.data, src_mat.cols, src_mat.rows
                 , src_mat.step, QImage::Format_RGB888);
 
-            emit captured(img.rgbSwapped().convertToFormat(
-                QImage::Format_ARGB32_Premultiplied));
+            img = img.rgbSwapped()
+                .convertToFormat(QImage::Format_ARGB32_Premultiplied);
+
+            QMetaObject::invokeMethod(this, "captured"
+                , Qt::QueuedConnection, Q_ARG(QImage,img));
         }
 
         if(rois.size() > 0) {
             if(isHiddenDetect()) {
                 const cv::Rect &roi = rois.at(0);
-                emit detected(QRect(roi.x,roi.y,roi.width,roi.height));
+                QMetaObject::invokeMethod(this, "detected"
+                    , Qt::QueuedConnection
+                    , Q_ARG(QRect,QRect(roi.x,roi.y,roi.width,roi.height)));
 
             } else {
                 cv::Mat roi_mat = src_mat(rois.at(0));
@@ -189,11 +204,17 @@ void ACaptureThread::run() {
                 QImage img(roi_mat.data, roi_mat.cols, roi_mat.rows
                     , roi_mat.step, QImage::Format_RGB888);
 
-                emit detected(img.rgbSwapped().convertToFormat(
-                    QImage::Format_ARGB32_Premultiplied));
+                img = img.rgbSwapped()
+                    .convertToFormat(QImage::Format_ARGB32_Premultiplied);
+
+                QMetaObject::invokeMethod(this, "detected"
+                    , Qt::QueuedConnection, Q_ARG(QImage,img));
             }
         }
     }
 
-    if(!isHiddenCapture()) emit captured(QImage());
+    if(!isHiddenCapture()) {
+        QMetaObject::invokeMethod(this, "captured"
+            , Qt::QueuedConnection, Q_ARG(QImage,QImage()));
+    }
 }
