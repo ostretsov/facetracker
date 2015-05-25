@@ -18,6 +18,14 @@ void AUniformSystemTrayIcon::setIcon(const QIcon &icon) {
 
 
 // ========================================================================== //
+// Set icon.
+// ========================================================================== //
+void AUniformSystemTrayIcon::setIcon(const QString &fname) {
+    _tray_icon->setIcon(QIcon(fname));
+}
+
+
+// ========================================================================== //
 // Get context menu.
 // ========================================================================== //
 QMenu *AUniformSystemTrayIcon::contextMenu() const {

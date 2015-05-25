@@ -195,7 +195,7 @@ void AServiceController::createTray() {
     tray_menu->addAction(AServiceController::tr("Quit"), qApp, SLOT(quit()));
 
     _tray = ASystemTrayIcon::create(this);
-    _tray->setIcon(QIcon(QStringLiteral(":/images/gray.png")));
+    _tray->setIcon(QStringLiteral(":/images/gray.png"));
     _tray->setContextMenu(tray_menu);
     _tray->show();
 }
@@ -217,7 +217,7 @@ void AServiceController::shutdown() {
 // On gray activated.
 // ========================================================================== //
 void AServiceController::onGrayActivated() {
-    if(_tray) _tray->setIcon(QIcon(QStringLiteral(":/images/gray.png")));
+    if(_tray) _tray->setIcon(QStringLiteral(":/images/gray.png"));
 
     qDebug() << "GRAY";
 }
@@ -227,7 +227,7 @@ void AServiceController::onGrayActivated() {
 // On green activated.
 // ========================================================================== //
 void AServiceController::onGreenActivated() {
-    if(_tray) _tray->setIcon(QIcon(QStringLiteral(":/images/green.png")));
+    if(_tray) _tray->setIcon(QStringLiteral(":/images/green.png"));
 
     qDebug() << "GREEN";
 }
@@ -237,7 +237,7 @@ void AServiceController::onGreenActivated() {
 // On red activated.
 // ========================================================================== //
 void AServiceController::onRedActivated() {
-    if(_tray) _tray->setIcon(QIcon(QStringLiteral(":/images/red.png")));
+    if(_tray) _tray->setIcon(QStringLiteral(":/images/red.png"));
 
     qDebug() << "RED";
 }

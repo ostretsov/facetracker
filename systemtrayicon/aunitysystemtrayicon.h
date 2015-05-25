@@ -24,6 +24,9 @@ class AUnitySystemTrayIcon : public ASystemTrayIcon {
         //! Set icon.
         virtual void setIcon(const QIcon &icon);
 
+        //! Set icon.
+        virtual void setIcon(const QString &fname);
+
         //! Get context menu.
         virtual QMenu *contextMenu() const;
 

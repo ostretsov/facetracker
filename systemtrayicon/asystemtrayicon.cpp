@@ -14,7 +14,7 @@ ASystemTrayIcon *ASystemTrayIcon::create(QObject *parent) {
     #else
         QString desktop = getenv("XDG_CURRENT_DESKTOP");
 
-        bool is_unity = (desktop.toLower() == "unity");
+        bool is_unity = (desktop.toLower() == QLatin1String("unity"));
         if(!is_unity) return new AUniformSystemTrayIcon(parent);
 
         return new AUnitySystemTrayIcon(parent);

@@ -57,17 +57,53 @@ AUnitySystemTrayIcon::~AUnitySystemTrayIcon() {
 // Set icon.
 // ========================================================================== //
 void AUnitySystemTrayIcon::setIcon(const QIcon &icon) {
-    QString tmp_path = QDir::tempPath();
+    const QString tmp_path = QDir::tempPath();
 
     QPixmap pixmap = icon.pixmap(QSize(16,16));
-    pixmap.save(tmp_path + QStringLiteral("/tray-icon.png"), "PNG");
+    pixmap.save(tmp_path + QStringLiteral("/tray.png"), "PNG");
 
     QPixmap pixmap1 = icon.pixmap(QSize(48,48));
-    pixmap1.save(tmp_path + QStringLiteral("/tray-ballon-icon.png"), "PNG");
+    pixmap1.save(tmp_path + QStringLiteral("/tray-balloon.png"), "PNG");
 
     app_indicator_set_icon_theme_path(_indicator
         , tmp_path.toStdString().c_str());
     app_indicator_set_icon(_indicator, "tray-icon");
+}
+
+
+// ========================================================================== //
+// Set icon.
+// ========================================================================== //
+void AUnitySystemTrayIcon::setIcon(const QString &fname) {
+    if(!QFile::exists(fname)) return;
+
+    QImage img(fname);
+    if(img.isNull()) return;
+
+    const QString tmp_path = QDir::tempPath();
+
+    const QString tray_fname
+        = tmp_path + QLatin1Char('/') + QFileInfo(fname).baseName()
+            + QLatin1String(".png");
+
+    if(!QFile::exists(tray_fname)) {
+        QImage tray_img = img.scaled(QSize(16,16), Qt::KeepAspectRatio);
+        tray_img.save(tray_fname);
+    }
+
+    const QString balloon_fname
+        = tmp_path + QLatin1Char('/') + QFileInfo(fname).baseName()
+            + QLatin1String("-balloon.png");
+
+    if(!QFile::exists(balloon_fname)) {
+        QImage balloon_img = img.scaled(QSize(48,48), Qt::KeepAspectRatio);
+        balloon_img.save(balloon_fname);
+    }
+
+    app_indicator_set_icon_theme_path(_indicator
+        , tmp_path.toStdString().c_str());
+    app_indicator_set_icon(_indicator
+        , QFileInfo(fname).baseName().toStdString().c_str());
 }
 
 
@@ -149,7 +185,7 @@ void AUnitySystemTrayIcon::showMessage(const QString &title
 
     if(!notify_init("tray")) return;
 
-    QString fname = QDir::tempPath() + QLatin1String("/tray-ballon-icon.png");
+    QString fname = QDir::tempPath() + QLatin1String("/tray-balloon.png");
 
     NotifyNotification *notify
         = notify_notification_new(title.toStdString().c_str()
