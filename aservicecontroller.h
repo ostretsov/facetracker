@@ -4,6 +4,7 @@
 #include <QtCore/QObject>
 
 class AServiceDatabaseController;
+class ASessionController;
 class ATableController;
 class ASystemTrayIcon;
 
@@ -32,8 +33,17 @@ class AServiceController : public QObject {
         //! Get rss.
         ATableController *rss() const;
 
+    public slots:
+        //! Start.
+        void start();
+
+        //! Stop.
+        void stop();
+
     private:
         AServiceDatabaseController *_service_db_ctrl;
+
+        ASessionController *_session_ctrl;
 
         ASystemTrayIcon *_tray;
 
@@ -43,6 +53,15 @@ class AServiceController : public QObject {
     private slots:
         //! Shutdown.
         void shutdown();
+
+        //! On gray activated.
+        void onGrayActivated();
+
+        //! On green activated.
+        void onGreenActivated();
+
+        //! On red activated.
+        void onRedActivated();
 
 };
 

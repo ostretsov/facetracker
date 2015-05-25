@@ -14,6 +14,7 @@
 #include "aservicecontroller.h"
 #include "aservicemetatypecontroller.h"
 #include "aservicedatabasecontroller.h"
+#include "asessioncontroller.h"
 #include "asettingsdialog.h"
 
 Q_GLOBAL_STATIC(AServiceController, _g_service_ctrl)
@@ -109,22 +110,31 @@ AServiceController *AServiceController::instance() {return _g_service_ctrl;}
 // Constructor.
 // ========================================================================== //
 AServiceController::AServiceController(QObject *parent)
-    : QObject(parent), _service_db_ctrl(new AServiceDatabaseController(this)) {
+    : QObject(parent), _service_db_ctrl(new AServiceDatabaseController(this))
+    , _session_ctrl(new ASessionController(this)) {
 
-    qInstallMessageHandler(handleMessage);
+    //qInstallMessageHandler(handleMessage);
 
     AServiceMetatypeController::registerMetaTypes();
 
+    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(shutdown()));
+
     _service_db_ctrl->openConnection();
+
+    connect(_session_ctrl, SIGNAL(grayActivated())
+        , this, SLOT(onGrayActivated()));
+    connect(_session_ctrl, SIGNAL(greenActivated())
+        , this, SLOT(onGreenActivated()));
+    connect(_session_ctrl, SIGNAL(redActivated())
+        , this, SLOT(onRedActivated()));
 
     createTray();
 
-    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(shutdown()));
-
 // TODO: for tests only, remove later.
-ASettingsDialog dlg;
-dlg.exec();
-QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
+//ASettingsDialog dlg;
+//dlg.exec();
+//QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
+QMetaObject::invokeMethod(_session_ctrl, "start", Qt::QueuedConnection);
 //
 }
 
@@ -162,6 +172,18 @@ ATableController *AServiceController::rss() const {
 
 
 // ========================================================================== //
+// Start.
+// ========================================================================== //
+void AServiceController::start() {}
+
+
+// ========================================================================== //
+// Stop.
+// ========================================================================== //
+void AServiceController::stop() {}
+
+
+// ========================================================================== //
 // Create tray.
 // ========================================================================== //
 void AServiceController::createTray() {
@@ -188,4 +210,34 @@ void AServiceController::shutdown() {
 
     if(_service_db_ctrl->isOpened())
         _service_db_ctrl->closeConnection();
+}
+
+
+// ========================================================================== //
+// On gray activated.
+// ========================================================================== //
+void AServiceController::onGrayActivated() {
+    if(_tray) _tray->setIcon(QIcon(QStringLiteral(":/images/gray.png")));
+
+    qDebug() << "GRAY";
+}
+
+
+// ========================================================================== //
+// On green activated.
+// ========================================================================== //
+void AServiceController::onGreenActivated() {
+    if(_tray) _tray->setIcon(QIcon(QStringLiteral(":/images/green.png")));
+
+    qDebug() << "GREEN";
+}
+
+
+// ========================================================================== //
+// On red activated.
+// ========================================================================== //
+void AServiceController::onRedActivated() {
+    if(_tray) _tray->setIcon(QIcon(QStringLiteral(":/images/red.png")));
+
+    qDebug() << "RED";
 }
