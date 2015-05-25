@@ -153,6 +153,11 @@ void ACaptureThread::run() {
     while(!isInterruptionRequested()) {
         cv::Mat src_mat;
         capture >> src_mat;
+        if(src_mat.empty()) {
+            QMetaObject::invokeMethod(this, "failed", Qt::QueuedConnection);
+
+            break;
+        }
 
         cv::Mat gry_mat;
         cv::cvtColor(src_mat, gry_mat, cv::COLOR_BGR2GRAY);
