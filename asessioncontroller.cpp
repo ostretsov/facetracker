@@ -10,7 +10,7 @@
 // Constructor.
 // ========================================================================== //
 ASessionController::ASessionController(QObject *parent)
-    : QObject(parent), _local_ts(0), _remote_ts(0) {
+    : QObject(parent), _local_ts(0), _remote_ts(0), _working_period(30*60000) {
 
     _face_ctrl = new AFaceController(this);
     connect(_face_ctrl, SIGNAL(faceIn()), this, SLOT(onFaceIn()));
@@ -50,6 +50,12 @@ qint64 ASessionController::remoteTimeStamp() const {return _remote_ts;}
 
 
 // ========================================================================== //
+// Get working period.
+// ========================================================================== //
+qint64 ASessionController::workingPeriod() const {return _working_period;}
+
+
+// ========================================================================== //
 // Get is running.
 // ========================================================================== //
 bool ASessionController::isRunning() const {return _machine->isRunning();}
@@ -59,6 +65,14 @@ bool ASessionController::isRunning() const {return _machine->isRunning();}
 // Set remote time stamp.
 // ========================================================================== //
 void ASessionController::setRemoteTimeStamp(const qint64 &ts) {_remote_ts = ts;}
+
+
+// ========================================================================== //
+// Set working period.
+// ========================================================================== //
+void ASessionController::setWorkingPeriod(const qint64 &ms) {
+    _working_period = ms;
+}
 
 
 // ========================================================================== //
@@ -86,17 +100,40 @@ void ASessionController::stop() {
 // On face in.
 // ========================================================================== //
 void ASessionController::onFaceIn() {
-    _detections.insert(QDateTime::currentMSecsSinceEpoch() - _local_ts, true);
+    _detections.append(qMakePair(QDateTime::currentMSecsSinceEpoch(),true));
 
-    if(_detections.size() == 3) {
-        QList<qint64> keys = _detections.keys();
-        if(_detections.value(keys.at(0))
-            && !_detections.value(keys.at(1))
-            && _detections.value(keys.at(2))) {
+    while(!_detections.first().second) {
+        _detections.removeFirst();
+        if(_detections.isEmpty()) break;
+    }
 
-            _detections[keys.at(1)] = true;
+    if(_detections.size() < 3) return;
+
+    for(int i = 2, n = _detections.size(); i < n; ++i) {
+        if(_detections.at(i-2).second
+            && !_detections.at(i-1).second
+            && _detections.at(i).second) {
+
+            _detections[i-1].second = true;
         }
     }
+
+    if((_detections.last().first-_detections.first().first) > _working_period)
+        emit redActivated();
+    else emit greenActivated();
+
+    QList<QPair<qint64,bool> > period;
+    for(int i = 2; i < _detections.size(); ++i) {
+        if(!_detections.at(i-1).second && !_detections.at(i).second) {
+            for(int ii = 0, nn = i-1; ii < nn; ++ii)
+                period.append(_detections.takeFirst());
+
+            break;
+        }
+    }
+
+    if(period.isEmpty()) return;
+
 }
 
 
@@ -104,5 +141,7 @@ void ASessionController::onFaceIn() {
 // On face out.
 // ========================================================================== //
 void ASessionController::onFaceOut() {
-    _detections.insert(QDateTime::currentMSecsSinceEpoch() - _local_ts, false);
+    _detections.append(qMakePair(QDateTime::currentMSecsSinceEpoch(),false));
+    if(_detections.size() > 1 && !_detections.at(_detections.size()-2).second)
+        emit grayActivated();
 }
