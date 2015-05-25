@@ -37,9 +37,9 @@ void checkApplicationVersion(const QCoreApplication &app) {
 //
 // ========================================================================== //
 int main(int argc, char *argv[]) {
-    QCoreApplication::setOrganizationName(QStringLiteral("AlexisSoft"));
-    QCoreApplication::setOrganizationDomain(QStringLiteral("fl.ru"));
-    QCoreApplication::setApplicationName(QStringLiteral("facetracker"));
+    QCoreApplication::setOrganizationName(QStringLiteral("Face Tracker"));
+    QCoreApplication::setOrganizationDomain(QStringLiteral("face-tracker.com"));
+    QCoreApplication::setApplicationName(QStringLiteral("Face Tracker"));
     QCoreApplication::setApplicationVersion(QStringLiteral("1.0"));
 
     QApplication app(argc, argv);
