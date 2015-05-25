@@ -14,6 +14,8 @@ class ACaptureThread : public QThread {
         void detected(const QRect &roi);
         void detected(const QImage &img);
 
+        void failed();
+
     public:
         //! Constructor.
         explicit ACaptureThread(QObject *parent = NULL);

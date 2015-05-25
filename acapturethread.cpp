@@ -113,7 +113,7 @@ void ACaptureThread::run() {
             << qPrintable(ACaptureThread::tr("Capturing with device %1 failed!")
                 .arg(dev_idx));
 
-        return;
+        emit failed(); return;
     }
 
     _mutex.lock();
@@ -125,7 +125,7 @@ void ACaptureThread::run() {
         QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "app").warning()
             << qPrintable(ACaptureThread::tr("Can not create temporary file!"));
 
-        return;
+        emit failed(); return;
     }
 
     const QString dst_fname = QDir::toNativeSeparators(dst_file->fileName());
@@ -135,7 +135,7 @@ void ACaptureThread::run() {
         QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "app").warning()
             << qPrintable(ACaptureThread::tr("Load classifier failed!"));
 
-        return;
+        emit failed(); delete dst_file; return;
     }
 
     delete dst_file;
