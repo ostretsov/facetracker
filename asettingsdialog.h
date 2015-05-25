@@ -27,7 +27,7 @@ class ASettingsDialog : public QDialog {
 
         QLineEdit *_user_ledit, *_pswd_ledit;
 
-        QSpinBox *_duration_spbox;
+        QSpinBox *_working_period_spbox;
 
         QLabel *_register_label;
 

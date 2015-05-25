@@ -44,9 +44,9 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     duration_label->setText(
         ASettingsDialog::tr("No more in front\nof webcamera:"));
 
-    _duration_spbox = new QSpinBox(this);
-    _duration_spbox->setSuffix(ASettingsDialog::tr(" min."));
-    _duration_spbox->setRange(1,60);
+    _working_period_spbox = new QSpinBox(this);
+    _working_period_spbox->setSuffix(ASettingsDialog::tr(" min."));
+    _working_period_spbox->setRange(1,60);
 
     _register_label = new QLabel(this);
     _register_label->setOpenExternalLinks(true);
@@ -78,7 +78,7 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     layout->addWidget(pswd_label, 2, 0, 1, 1);
     layout->addWidget(_pswd_ledit, 2, 1, 1, 2);
     layout->addWidget(duration_label, 3, 0, 1, 1);
-    layout->addWidget(_duration_spbox, 3, 1, 1, 1);
+    layout->addWidget(_working_period_spbox, 3, 1, 1, 1);
     layout->addWidget(_register_label, 1, 3, 1, 1);
     layout->addWidget(login_pbut, 2, 3, 1, 1);
     layout->addWidget(statistic_label, 4, 1, 1, 2);
@@ -117,8 +117,8 @@ void ASettingsDialog::loadSettings() {
     _pswd_ledit->setText(
         ASettingsHelper::value(QStringLiteral("password")).toString());
 
-    _duration_spbox->setValue(
-        ASettingsHelper::value(QStringLiteral("duration"), 30).toInt());
+    _working_period_spbox->setValue(
+        ASettingsHelper::value(QStringLiteral("working-period"), 30).toInt());
 
     _register_label->setText(
         QString("<a href=\"%1\">%2</a>")
