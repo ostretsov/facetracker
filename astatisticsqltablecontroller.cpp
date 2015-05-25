@@ -65,8 +65,8 @@ bool AStatisticSqlTableController::select() {
                     "statistic_id INTEGER PRIMARY KEY AUTOINCREMENT" \
                     ", username TEXT NOT NULL" \
                     ", session_id TEXT NOT NULL" \
-                    ", fixed_from INTEGER NOT NULL" \
-                    ", fixed_to INTEGER NOT NULL" \
+                    ", period_from INTEGER NOT NULL" \
+                    ", period_to INTEGER NOT NULL" \
                     ", is_extra_time INTEGER NOT NULL" \
                     ", is_synced INTEGER NOT NULL)");
 
@@ -98,12 +98,12 @@ bool AStatisticSqlTableController::select() {
             , Qt::Horizontal, AStatisticSqlTableController::tr("Session ID"));
 
         _model->setHeaderData(
-            _model->fieldIndex(QStringLiteral("fixed_from"))
-            , Qt::Horizontal, AStatisticSqlTableController::tr("Fixed from"));
+            _model->fieldIndex(QStringLiteral("period_from"))
+            , Qt::Horizontal, AStatisticSqlTableController::tr("Period from"));
 
         _model->setHeaderData(
-            _model->fieldIndex(QStringLiteral("fixed_to"))
-            , Qt::Horizontal, AStatisticSqlTableController::tr("Fixed to"));
+            _model->fieldIndex(QStringLiteral("period_to"))
+            , Qt::Horizontal, AStatisticSqlTableController::tr("Period to"));
 
         _model->setHeaderData(
             _model->fieldIndex(QStringLiteral("is_extra_time"))
