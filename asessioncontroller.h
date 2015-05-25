@@ -51,7 +51,7 @@ class ASessionController : public QObject {
         void stop();
 
     private:
-        qint64 _local_ts, _remote_ts, _working_period;
+        qint64 _remote_ts, _working_period;
 
         AFaceController *_face_ctrl;
 

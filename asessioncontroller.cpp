@@ -10,7 +10,7 @@
 // Constructor.
 // ========================================================================== //
 ASessionController::ASessionController(QObject *parent)
-    : QObject(parent), _local_ts(0), _remote_ts(0), _working_period(30*60000) {
+    : QObject(parent), _remote_ts(0), _working_period(30*60000) {
 
     _face_ctrl = new AFaceController(this);
     connect(_face_ctrl, SIGNAL(faceIn()), this, SLOT(onFaceIn()));
@@ -78,11 +78,7 @@ void ASessionController::setWorkingPeriod(const qint64 &ms) {
 // ========================================================================== //
 // Start.
 // ========================================================================== //
-void ASessionController::start() {
-    _local_ts = QDateTime::currentMSecsSinceEpoch();
-
-    _machine->start();
-}
+void ASessionController::start() {_machine->start();}
 
 
 // ========================================================================== //
