@@ -8,7 +8,7 @@ class QLineEdit;
 class QSpinBox;
 class QLabel;
 
-class ACaptureThread;
+class AFaceCaptureThread;
 
 class ASettingsDialog : public QDialog {
     Q_OBJECT
@@ -21,7 +21,7 @@ class ASettingsDialog : public QDialog {
         virtual ~ASettingsDialog();
 
     private:
-        ACaptureThread *_capture_thread;
+        AFaceCaptureThread *_capture;
 
         QComboBox *_lang_cbox;
 

@@ -10,17 +10,17 @@
 #include "helpers/asettingshelper.h"
 
 #include "asettingsdialog.h"
-#include "acapturethread.h"
+#include "afacecapturethread.h"
 
 // ========================================================================== //
 // Constructor.
 // ========================================================================== //
 ASettingsDialog::ASettingsDialog(QWidget *parent)
-    : QDialog(parent), _capture_thread(new ACaptureThread(this)) {
+    : QDialog(parent), _capture(new AFaceCaptureThread(this)) {
 
     setWindowTitle(ASettingsDialog::tr("Settings"));
 
-    _capture_thread->setCaptureHidden(false);
+    _capture->setCaptureHidden(false);
 
     QLabel *lang_label = new QLabel(this);
     lang_label->setText(ASettingsDialog::tr("Language:"));
@@ -61,9 +61,9 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
         " <a href=\"http://google.ru\">at link</a>."));
 
     AImageWidget *img_wdg = new AImageWidget(this);
-    connect(_capture_thread, SIGNAL(captured(const QImage&))
+    connect(_capture, SIGNAL(captured(const QImage&))
         , img_wdg, SLOT(updateImage(const QImage&)));
-    connect(_capture_thread, SIGNAL(detected(const QRect&))
+    connect(_capture, SIGNAL(detected(const QRect&))
         , img_wdg, SLOT(updateRoi(const QRect&)));
 
     QLabel *rss_label = new QLabel(this);
@@ -89,7 +89,7 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     setLayout(layout);
 
     QMetaObject::invokeMethod(this, "loadSettings", Qt::QueuedConnection);
-    QMetaObject::invokeMethod(_capture_thread, "start", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(_capture, "start", Qt::QueuedConnection);
 }
 
 
@@ -97,9 +97,9 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
 // Destructor.
 // ========================================================================== //
 ASettingsDialog::~ASettingsDialog() {
-    if(_capture_thread->isRunning()) {
-        _capture_thread->requestInterruption();
-        _capture_thread->wait();
+    if(_capture->isRunning()) {
+        _capture->requestInterruption();
+        _capture->wait();
     }
 }
 

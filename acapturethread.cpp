@@ -20,6 +20,14 @@ ACaptureThread::ACaptureThread(QObject *parent)
 
 
 // ========================================================================== //
+// Get detector classifier file name.
+// ========================================================================== //
+QString ACaptureThread::detectorClassifier() {
+    QMutexLocker locker(&_mutex); return _det_fname;
+}
+
+
+// ========================================================================== //
 // Get detector minimum size.
 // ========================================================================== //
 int ACaptureThread::detectorMinSize() {
@@ -48,6 +56,14 @@ bool ACaptureThread::isHiddenCapture() {
 // ========================================================================== //
 bool ACaptureThread::isHiddenDetect() {
     QMutexLocker locker(&_mutex); return _hidden_detect;
+}
+
+
+// ========================================================================== //
+// Set detector classifier file name.
+// ========================================================================== //
+void ACaptureThread::setDetectorClassifier(const QString &fname) {
+    QMutexLocker locker(&_mutex); _det_fname = fname;
 }
 
 
@@ -100,7 +116,9 @@ void ACaptureThread::run() {
         return;
     }
 
-    const QString src_fname(":/classifiers/haar_frontalface_alt_tree.xml");
+    _mutex.lock();
+    const QString src_fname = _det_fname;
+    _mutex.unlock();
 
     QTemporaryFile *dst_file = QTemporaryFile::createNativeFile(src_fname);
     if(!dst_file) {

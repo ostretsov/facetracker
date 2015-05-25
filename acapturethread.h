@@ -21,6 +21,9 @@ class ACaptureThread : public QThread {
         //! Destructor.
         virtual ~ACaptureThread() {}
 
+        //! Get detector classifier file name.
+        QString detectorClassifier();
+
         //! Get detector minimum size.
         int detectorMinSize();
 
@@ -34,6 +37,9 @@ class ACaptureThread : public QThread {
         bool isHiddenDetect();
 
     public slots:
+        //! Set detector classifier file name.
+        void setDetectorClassifier(const QString &fname);
+
         //! Set detector minimum size.
         void setDetectorMinSize(int min);
 
@@ -52,6 +58,8 @@ class ACaptureThread : public QThread {
 
     private:
         int _dev_idx;
+
+        QString _det_fname;
 
         int _det_min, _det_max;
 
