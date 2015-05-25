@@ -35,13 +35,17 @@ AFaceController::AFaceController(QObject *parent) : QObject(parent) {
 
     QFinalState *face_in_state = new QFinalState(_machine);
     connect(face_in_state, SIGNAL(entered()), _timer, SLOT(stop()));
-    connect(face_in_state, SIGNAL(entered()), this, SLOT(stopCapturing()));
-    connect(face_in_state, SIGNAL(entered()), this, SIGNAL(faceIn()));
+    connect(face_in_state, SIGNAL(entered())
+        , this, SLOT(stopCapturing()), Qt::QueuedConnection);
+    connect(face_in_state, SIGNAL(entered())
+        , this, SIGNAL(faceIn()), Qt::QueuedConnection);
 
     QFinalState *face_out_state = new QFinalState(_machine);
     connect(face_out_state, SIGNAL(entered()), _timer, SLOT(stop()));
-    connect(face_out_state, SIGNAL(entered()), this, SLOT(stopCapturing()));
-    connect(face_out_state, SIGNAL(entered()), this, SIGNAL(faceOut()));
+    connect(face_out_state, SIGNAL(entered())
+        , this, SLOT(stopCapturing()), Qt::QueuedConnection);
+    connect(face_out_state, SIGNAL(entered())
+        , this, SIGNAL(faceOut()), Qt::QueuedConnection);
 
     initial_state->addTransition(_capture
         , SIGNAL(started()), detection1_state);
