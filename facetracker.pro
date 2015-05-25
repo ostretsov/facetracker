@@ -21,7 +21,9 @@ SOURCES += main.cpp \
     aservicedatabasecontroller.cpp \
     asettingsdialog.cpp \
     astatisticsqltablecontroller.cpp \
-    arsssqltablecontroller.cpp
+    arsssqltablecontroller.cpp \
+    afacecontroller.cpp \
+    afacecapturethread.cpp
 
 HEADERS += \
     helpers/asettingshelper.h \
@@ -38,7 +40,9 @@ HEADERS += \
     aservicedatabasecontroller.h \
     asettingsdialog.h \
     astatisticsqltablecontroller.h \
-    arsssqltablecontroller.h
+    arsssqltablecontroller.h \
+    afacecontroller.h \
+    afacecapturethread.h
 
 unix {
     INCLUDEPATH += /usr/include/libappindicator-0.1 \
