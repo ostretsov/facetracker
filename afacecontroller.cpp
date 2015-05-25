@@ -48,21 +48,21 @@ AFaceController::AFaceController(QObject *parent) : QObject(parent) {
     initial_state->addTransition(_capture
         , SIGNAL(finished()), fail_state);
     initial_state->addTransition(_timer
-        , SIGNAL(timeout()), fail_state);
+        , SIGNAL(timeout()), face_out_state);
 
     detection1_state->addTransition(_capture
         , SIGNAL(detected(const QRect&)), detection2_state);
     detection1_state->addTransition(_capture
         , SIGNAL(failed()), fail_state);
     detection1_state->addTransition(_timer
-        , SIGNAL(timeout()), fail_state);
+        , SIGNAL(timeout()), face_out_state);
 
     detection2_state->addTransition(_capture
         , SIGNAL(detected(const QRect&)), face_in_state);
     detection2_state->addTransition(_capture
         , SIGNAL(failed()), fail_state);
     detection2_state->addTransition(_timer
-        , SIGNAL(timeout()), fail_state);
+        , SIGNAL(timeout()), face_out_state);
 
     _machine->setInitialState(initial_state);
 }
