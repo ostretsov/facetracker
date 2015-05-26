@@ -34,6 +34,9 @@ class ASessionController : public QObject {
         //! Get working period.
         qint64 workingPeriod() const;
 
+        //! Get webcam request frequency.
+        int webcamRequestFreq() const;
+
         //! Get is running.
         bool isRunning() const;
 
@@ -43,6 +46,9 @@ class ASessionController : public QObject {
 
         //! Set working period.
         void setWorkingPeriod(const qint64 &ms);
+
+        //! Set webcam request frequency.
+        void setWebcamRequestFreq(int ms);
 
         //! Start.
         void start();

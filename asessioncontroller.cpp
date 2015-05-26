@@ -54,6 +54,12 @@ qint64 ASessionController::workingPeriod() const {return _working_period;}
 
 
 // ========================================================================== //
+// Get webcam request frequency.
+// ========================================================================== //
+int ASessionController::webcamRequestFreq() const {return _timer->interval();}
+
+
+// ========================================================================== //
 // Get is running.
 // ========================================================================== //
 bool ASessionController::isRunning() const {return _machine->isRunning();}
@@ -71,6 +77,12 @@ void ASessionController::setRemoteTimeStamp(const qint64 &ts) {_remote_ts = ts;}
 void ASessionController::setWorkingPeriod(const qint64 &ms) {
     _working_period = ms;
 }
+
+
+// ========================================================================== //
+// Set webcam request frequency.
+// ========================================================================== //
+void ASessionController::setWebcamRequestFreq(int ms) {_timer->setInterval(ms);}
 
 
 // ========================================================================== //
