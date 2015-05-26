@@ -57,8 +57,8 @@ void ARequest::post(const QUrl &url, QHttpMultiPart *multi_part) {
 // ========================================================================== //
 // On reply data read.
 // ========================================================================== //
-bool ARequest::onReplyDataReady(QByteArray &data) {
-    emit readyRead(data); return true;
+bool ARequest::onReplyDataReady(int http_code, QByteArray &data) {
+    Q_UNUSED(http_code); emit readyRead(data); return true;
 }
 
 
@@ -69,8 +69,11 @@ void ARequest::onReplyReadyRead() {
     QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
     if(!reply) return;
 
+    const int http_code
+        = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
     QByteArray data = reply->readAll();
-    switch(onReplyDataReady(data)) {
+    switch(onReplyDataReady(http_code,data)) {
         case true:  emit succeed(); break;
         case false: emit failed();  break;
     }

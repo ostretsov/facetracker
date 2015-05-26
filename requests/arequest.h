@@ -40,7 +40,7 @@ class ARequest : public QObject {
 
     protected:
         //! On reply data read.
-        virtual bool onReplyDataReady(QByteArray &data);
+        virtual bool onReplyDataReady(int http_code, QByteArray &data);
 
     private:
         QPointer<QNetworkAccessManager> _nam;
