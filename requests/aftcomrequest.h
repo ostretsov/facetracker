@@ -6,6 +6,9 @@
 class AFtcomRequest : public ARequest {
     Q_OBJECT
 
+    signals:
+        void message(const QString &msg);
+
     public:
         //! Constructor.
         explicit AFtcomRequest(QObject *parent = NULL);

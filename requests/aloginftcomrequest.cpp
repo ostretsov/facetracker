@@ -1,3 +1,6 @@
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+
 #include <QtNetwork/QHttpMultiPart>
 
 #include "aloginftcomrequest.h"
@@ -64,4 +67,31 @@ void ALoginFtcomRequest::send() {
         = QString("http://%1/%2/api/login").arg(domain()).arg(locale());
 
     post(QUrl::fromUserInput(url), multi_part);
+}
+
+
+// ========================================================================== //
+// On reply data read.
+// ========================================================================== //
+bool ALoginFtcomRequest::onReplyDataReady(int http_code, QByteArray &data) {
+    int status_code = -1;
+
+    if(!data.isEmpty()) {
+        QJsonDocument doc = QJsonDocument::fromJson(data);
+        if(doc.isObject()) {
+            QJsonObject obj = doc.object();
+
+            if(obj.contains(QStringLiteral("status")))
+                status_code = obj.value(QStringLiteral("status")).toInt();
+
+            if(obj.contains(QStringLiteral("message"))) {
+                const QString msg
+                    = obj.value(QStringLiteral("message")).toString();
+
+                if(!msg.isEmpty()) emit message(msg);
+            }
+        }
+    }
+
+    return (http_code == 200 && status_code == 0) ? true : false;
 }

@@ -33,6 +33,10 @@ class ALoginFtcomRequest : public AFtcomRequest {
         //! Send.
         virtual void send();
 
+    protected:
+        //! On reply data read.
+        virtual bool onReplyDataReady(int http_code, QByteArray &data);
+
     private:
         QString _user, _pswd;
 
