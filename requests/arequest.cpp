@@ -69,7 +69,8 @@ void ARequest::onReplyReadyRead() {
     QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
     if(!reply) return;
 
-    switch(onReplyDataReady(reply->readAll())) {
+    QByteArray data = reply->readAll();
+    switch(onReplyDataReady(data)) {
         case true:  emit succeed(); break;
         case false: emit failed();  break;
     }
