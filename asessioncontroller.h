@@ -28,8 +28,8 @@ class ASessionController : public QObject {
         //! Destructor.
         virtual ~ASessionController() {}
 
-        //! Get remote time stamp.
-        qint64 remoteTimeStamp() const;
+        //! Get remote delta time stamp.
+        qint64 remoteDeltaTimeStamp() const;
 
         //! Get working period.
         qint64 workingPeriod() const;
@@ -41,8 +41,8 @@ class ASessionController : public QObject {
         bool isRunning() const;
 
     public slots:
-        //! Set remote time stamp.
-        void setRemoteTimeStamp(const qint64 &ts);
+        //! Set remote delta time stamp.
+        void setRemoteDeltaTimeStamp(const qint64 &ts);
 
         //! Set working period.
         void setWorkingPeriod(const qint64 &ms);
@@ -57,7 +57,7 @@ class ASessionController : public QObject {
         void stop();
 
     private:
-        qint64 _remote_ts, _working_period;
+        qint64 _remote_delta_ts, _working_period;
 
         AFaceController *_face_ctrl;
 
@@ -66,6 +66,12 @@ class ASessionController : public QObject {
         QStateMachine *_machine;
 
         QList<QPair<qint64,bool> > _detections;
+
+        //! Clean detections.
+        void cleanDetections();
+
+        //! Export detection periods.
+        void exportDetectionPeriods();
 
     private slots:
         //! On face in.

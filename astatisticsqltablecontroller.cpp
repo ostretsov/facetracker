@@ -36,8 +36,8 @@ QList<QString> AStatisticSqlTableController::fieldNames() const {
         << QStringLiteral("statistic_id")
         << QStringLiteral("username")
         << QStringLiteral("session_id")
-        << QStringLiteral("fixed_from")
-        << QStringLiteral("fixed_to")
+        << QStringLiteral("period_from")
+        << QStringLiteral("period_to")
         << QStringLiteral("is_extra_time")
         << QStringLiteral("is_synced");
 
@@ -63,12 +63,12 @@ bool AStatisticSqlTableController::select() {
             const QString query_str
                 = QLatin1String("CREATE TABLE IF NOT EXISTS statistic(" \
                     "statistic_id INTEGER PRIMARY KEY AUTOINCREMENT" \
-                    ", username TEXT NOT NULL" \
-                    ", session_id TEXT NOT NULL" \
-                    ", period_from INTEGER NOT NULL" \
-                    ", period_to INTEGER NOT NULL" \
-                    ", is_extra_time INTEGER NOT NULL" \
-                    ", is_synced INTEGER NOT NULL)");
+                    ", username TEXT" \
+                    ", session_id TEXT" \
+                    ", period_from INTEGER" \
+                    ", period_to INTEGER" \
+                    ", is_extra_time INTEGER" \
+                    ", is_synced INTEGER)");
 
             QSqlQuery query(db);
             if(!query.exec(query_str)) {

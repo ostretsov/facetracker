@@ -2,15 +2,19 @@
 #include <QtCore/QFinalState>
 #include <QtCore/QDateTime>
 #include <QtCore/QTimer>
+#include <QtCore/QDebug>
+
+#include "database/atablecontroller.h"
 
 #include "asessioncontroller.h"
+#include "aservicecontroller.h"
 #include "afacecontroller.h"
 
 // ========================================================================== //
 // Constructor.
 // ========================================================================== //
 ASessionController::ASessionController(QObject *parent)
-    : QObject(parent), _remote_ts(0), _working_period(10000/*30*60000*/) {
+    : QObject(parent), _remote_delta_ts(0), _working_period(/*30*60000*/20000) {
 
     _face_ctrl = new AFaceController(this);
     connect(_face_ctrl, SIGNAL(faceIn()), this, SLOT(onFaceIn()));
@@ -42,9 +46,11 @@ ASessionController::ASessionController(QObject *parent)
 
 
 // ========================================================================== //
-// Get remote time stamp.
+// Get remote delta time stamp.
 // ========================================================================== //
-qint64 ASessionController::remoteTimeStamp() const {return _remote_ts;}
+qint64 ASessionController::remoteDeltaTimeStamp() const {
+    return _remote_delta_ts;
+}
 
 
 // ========================================================================== //
@@ -66,9 +72,11 @@ bool ASessionController::isRunning() const {return _machine->isRunning();}
 
 
 // ========================================================================== //
-// Set remote time stamp.
+// Set remote delta time stamp.
 // ========================================================================== //
-void ASessionController::setRemoteTimeStamp(const qint64 &ts) {_remote_ts = ts;}
+void ASessionController::setRemoteDeltaTimeStamp(const qint64 &ts) {
+    _remote_delta_ts = ts;
+}
 
 
 // ========================================================================== //
@@ -103,14 +111,14 @@ void ASessionController::stop() {
 
 
 // ========================================================================== //
-// On face in.
+// Clean detections.
 // ========================================================================== //
-void ASessionController::onFaceIn() {
-    _detections.append(qMakePair(QDateTime::currentMSecsSinceEpoch(),true));
+void ASessionController::cleanDetections() {
+    if(_detections.isEmpty()) return;
 
     while(!_detections.first().second) {
         _detections.removeFirst();
-        if(_detections.isEmpty()) break;
+        if(_detections.isEmpty()) return;
     }
 
     if(_detections.size() < 3) return;
@@ -123,10 +131,14 @@ void ASessionController::onFaceIn() {
             _detections[i-1].second = true;
         }
     }
+}
 
-    if((_detections.last().first-_detections.first().first) > _working_period)
-        emit redActivated();
-    else emit greenActivated();
+
+// ========================================================================== //
+// Export detection periods.
+// ========================================================================== //
+void ASessionController::exportDetectionPeriods() {
+    if(_detections.isEmpty()) return;
 
     QList<QPair<qint64,bool> > period;
     for(int i = 2; i < _detections.size(); ++i) {
@@ -140,6 +152,63 @@ void ASessionController::onFaceIn() {
 
     if(period.isEmpty()) return;
 
+    int edge = -1;
+    for(int i = 1, n = period.size(); i < n; ++i) {
+        if((period.at(i).first-period.first().first) > _working_period) {
+            edge = i; break;
+        }
+    }
+
+    QVariantHash hash;
+    hash.insert(QStringLiteral("username"), QStringLiteral("unknown"));
+    hash.insert(QStringLiteral("session_id"), QStringLiteral("unknown"));
+    hash.insert(QStringLiteral("period_from")
+        , period.first().first+_remote_delta_ts);
+
+    if(edge == -1) {
+        hash.insert(QStringLiteral("period_to")
+            , period.last().first+_remote_delta_ts);
+
+    } else {
+        hash.insert(QStringLiteral("period_to")
+            , period.at(edge).first+_remote_delta_ts);
+    }
+
+    hash.insert(QStringLiteral("is_extra_time"), 0);
+    hash.insert(QStringLiteral("is_synced"), 0);
+
+    AServiceController::instance()->statistic()->appendRow(hash);
+
+    if(edge != -1) {
+        hash[QStringLiteral("period_from")]
+            = period.at(edge).first + _remote_delta_ts;
+
+        hash[QStringLiteral("period_to")]
+            = period.last().first + _remote_delta_ts;
+
+        hash[QStringLiteral("is_extra_time")] = 1;
+
+        AServiceController::instance()->statistic()->appendRow(hash);
+    }
+
+    QMetaObject::invokeMethod(AServiceController::instance()->statistic()
+        , "submitAll", Qt::QueuedConnection);
+}
+
+
+// ========================================================================== //
+// On face in.
+// ========================================================================== //
+void ASessionController::onFaceIn() {
+    _detections.append(qMakePair(QDateTime::currentMSecsSinceEpoch(),true));
+
+    cleanDetections();
+
+    if((_detections.last().first-_detections.first().first) > _working_period)
+        emit redActivated();
+    else emit greenActivated();
+
+    exportDetectionPeriods();
 }
 
 
@@ -150,4 +219,6 @@ void ASessionController::onFaceOut() {
     _detections.append(qMakePair(QDateTime::currentMSecsSinceEpoch(),false));
     if(_detections.size() > 1 && !_detections.at(_detections.size()-2).second)
         emit grayActivated();
+
+    cleanDetections(); exportDetectionPeriods();
 }
