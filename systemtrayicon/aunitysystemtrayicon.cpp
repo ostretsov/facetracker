@@ -17,7 +17,7 @@ void onGtkMenuItemActivated(GtkMenuItem *menu_item, gpointer data) {
     Q_UNUSED(menu_item);
 
     QAction *action = static_cast<QAction*>(data);
-    action->trigger();
+    if(action->isEnabled()) action->trigger();
 }
 
 
@@ -28,7 +28,7 @@ void onGtkMenuItemToggled(GtkCheckMenuItem *menu_item, gpointer data) {
     bool checked = gtk_check_menu_item_get_active(menu_item);
 
     QAction *action = static_cast<QAction*>(data);
-    action->setChecked(checked);
+    if(action->isEnabled()) action->setChecked(checked);
 }
 
 

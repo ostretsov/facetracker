@@ -3,6 +3,8 @@
 
 #include <QtCore/QObject>
 
+class QAction;
+
 class AServiceDatabaseController;
 class ASessionController;
 class ATableController;
@@ -55,8 +57,13 @@ class AServiceController : public QObject {
 
         ASystemTrayIcon *_tray;
 
+        QAction *_settings_action;
+
         //! Create tray.
         void createTray();
+
+        //! Set actions enabled.
+        void setActionsEnabled(bool enabled);
 
     private slots:
         //! Show settings dialog.

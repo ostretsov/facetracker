@@ -189,11 +189,18 @@ void AServiceController::stop() {
 // Create tray.
 // ========================================================================== //
 void AServiceController::createTray() {
+    _settings_action = new QAction(this);
+    _settings_action->setText(AServiceController::tr("Settings..."));
+    connect(_settings_action, SIGNAL(triggered())
+        , this, SLOT(showSettingsDialog()));
+
     const QString app_name
         = qApp->applicationName() + QLatin1String(" v")
             + qApp->applicationVersion();
 
     QMenu *tray_menu = new QMenu(app_name);
+    tray_menu->addAction(_settings_action);
+    tray_menu->addSeparator();
     tray_menu->addAction(AServiceController::tr("Quit"), qApp, SLOT(quit()));
 
     _tray = ASystemTrayIcon::create(this);
@@ -204,15 +211,22 @@ void AServiceController::createTray() {
 
 
 // ========================================================================== //
+// Set actions enabled.
+// ========================================================================== //
+void AServiceController::setActionsEnabled(bool enabled) {
+    _settings_action->setEnabled(enabled);
+}
+
+
+// ========================================================================== //
 // Show settings dialog.
 // ========================================================================== //
 void AServiceController::showSettingsDialog() {
-    stop();
+    setActionsEnabled(false);
 
-    ASettingsDialog dlg;
-    dlg.exec();
+    stop(); ASettingsDialog().exec(); start();
 
-    start();
+    setActionsEnabled(true);
 }
 
 
