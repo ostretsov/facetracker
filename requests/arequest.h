@@ -15,6 +15,8 @@ class ARequest : public QObject {
         void succeed();
         void failed();
 
+        void serverTime(const qint64 &ts);
+
     public:
         //! Constructor.
         explicit ARequest(QObject *parent = NULL);

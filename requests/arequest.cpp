@@ -72,6 +72,12 @@ void ARequest::onReplyReadyRead() {
     const int http_code
         = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 
+    if(reply->hasRawHeader("Server-Time")) {
+        bool ok = false;
+        const qint64 ts = reply->rawHeader("Server-Time").toLongLong(&ok);
+        if(ok) emit serverTime(ts);
+    }
+
     QByteArray data = reply->readAll();
     switch(onReplyDataReady(http_code,data)) {
         case true:  emit succeed(); break;
