@@ -10,6 +10,7 @@
 #include "helpers/asettingshelper.h"
 
 #include "asettingsdialog.h"
+#include "aservicecontroller.h"
 #include "afacecapturethread.h"
 
 // ========================================================================== //
@@ -40,8 +41,8 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     _pswd_ledit = new QLineEdit(this);
     _pswd_ledit->setEchoMode(QLineEdit::Password);
 
-    QLabel *duration_label = new QLabel(this);
-    duration_label->setText(
+    QLabel *working_period_label = new QLabel(this);
+    working_period_label->setText(
         ASettingsDialog::tr("No more in front\nof webcamera:"));
 
     _working_period_spbox = new QSpinBox(this);
@@ -53,6 +54,21 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
 
     QPushButton *login_pbut = new QPushButton(this);
     login_pbut->setText(ASettingsDialog::tr("Login"));
+
+    connect(login_pbut, &QPushButton::clicked
+        , AServiceController::instance(), &AServiceController::login);
+
+    connect(AServiceController::instance(), &AServiceController::loginStarted
+        , [login_pbut]() {login_pbut->setEnabled(false);});
+
+    connect(AServiceController::instance(), &AServiceController::loginFailed
+        , [login_pbut]() {login_pbut->setEnabled(true);});
+
+    connect(AServiceController::instance(), &AServiceController::loginSucceed
+        , [login_pbut]() {
+            login_pbut->setEnabled(true);
+            login_pbut->setText(ASettingsDialog::tr("Logout"));
+    });
 
     QLabel *statistic_label = new QLabel(this);
     statistic_label->setOpenExternalLinks(true);
@@ -77,7 +93,7 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     layout->addWidget(_user_ledit, 1, 1, 1, 2);
     layout->addWidget(pswd_label, 2, 0, 1, 1);
     layout->addWidget(_pswd_ledit, 2, 1, 1, 2);
-    layout->addWidget(duration_label, 3, 0, 1, 1);
+    layout->addWidget(working_period_label, 3, 0, 1, 1);
     layout->addWidget(_working_period_spbox, 3, 1, 1, 1);
     layout->addWidget(_register_label, 1, 3, 1, 1);
     layout->addWidget(login_pbut, 2, 3, 1, 1);

@@ -1,8 +1,10 @@
 #ifndef ASERVICECONTROLLER_H
 #define ASERVICECONTROLLER_H
 
+#include <QtCore/QPointer>
 #include <QtCore/QObject>
 
+class QNetworkAccessManager;
 class QAction;
 
 class AServiceDatabaseController;
@@ -12,6 +14,15 @@ class ASystemTrayIcon;
 
 class AServiceController : public QObject {
     Q_OBJECT
+
+    signals:
+        void loginStarted();
+        void loginSucceed();
+        void loginFailed();
+
+        void logoutStarted();
+        void logoutSucceed();
+        void logoutFailed();
 
     public:
         //! Get instance.
@@ -36,6 +47,12 @@ class AServiceController : public QObject {
         ATableController *rss() const;
 
     public slots:
+        //! Login.
+        void login();
+
+        //! Logout.
+        void logout();
+
         //! Start.
         void start();
 
@@ -58,7 +75,9 @@ class AServiceController : public QObject {
 
         ASessionController *_session_ctrl;
 
-        ASystemTrayIcon *_tray;
+        QPointer<QNetworkAccessManager> _nam;
+
+        QPointer<ASystemTrayIcon> _tray;
 
         QAction *_settings_action;
 

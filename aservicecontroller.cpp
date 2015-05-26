@@ -5,9 +5,14 @@
 #include <QtCore/QFile>
 #include <QtCore/QDir>
 
+#include <QtNetwork/QNetworkAccessManager>
+
 #include <QtWidgets/QMenu>
 
 #include "database/atablecontroller.h"
+
+#include "requests/alogoutftcomrequest.h"
+#include "requests/aloginftcomrequest.h"
 
 #include "systemtrayicon/asystemtrayicon.h"
 
@@ -115,7 +120,8 @@ AServiceController *AServiceController::instance() {return _g_service_ctrl;}
 AServiceController::AServiceController(QObject *parent)
     : QObject(parent), _mode(MODE_GRAY)
     , _service_db_ctrl(new AServiceDatabaseController(this))
-    , _session_ctrl(new ASessionController(this)), _tray(NULL) {
+    , _session_ctrl(new ASessionController(this))
+    , _nam(new QNetworkAccessManager(this)) {
 
     //qInstallMessageHandler(handleMessage);
 
@@ -167,6 +173,68 @@ ATableController *AServiceController::statistic() const {
 // ========================================================================== //
 ATableController *AServiceController::rss() const {
     return _service_db_ctrl->rss();
+}
+
+
+// ========================================================================== //
+// Login.
+// ========================================================================== //
+void AServiceController::login() {
+    emit loginStarted();
+
+    ALoginFtcomRequest *request = new ALoginFtcomRequest(this);
+    request->setNam(_nam);
+    request->setDomain(QStringLiteral("face-tracker.com"));
+    request->setLocale(QStringLiteral("en"));
+    request->setUsername(QStringLiteral("OstretsovAA@gmail.com"));
+    request->setPassword(QStringLiteral("123"));
+
+    connect(request, &ALoginFtcomRequest::serverTime, [this](const qint64 &ts) {
+        _session_ctrl->setRemoteDeltaTimeStamp(
+            QDateTime::currentMSecsSinceEpoch()-ts);
+    });
+
+    connect(request, &ALoginFtcomRequest::succeed
+        , this, &AServiceController::loginSucceed);
+    connect(request, &ALoginFtcomRequest::failed
+        , this, &AServiceController::loginFailed);
+
+    connect(request, &ALoginFtcomRequest::succeed
+        , request, &AServiceController::deleteLater);
+    connect(request, &ALoginFtcomRequest::failed
+        , request, &AServiceController::deleteLater);
+
+    request->send();
+}
+
+
+// ========================================================================== //
+// Logout.
+// ========================================================================== //
+void AServiceController::logout() {
+    emit logoutStarted();
+
+    ALogoutFtcomRequest *request = new ALogoutFtcomRequest(this);
+    request->setNam(_nam);
+    request->setDomain(QStringLiteral("face-tracker.com"));
+    request->setLocale(QStringLiteral("en"));
+
+    connect(request, &ALoginFtcomRequest::serverTime, [this](const qint64 &ts) {
+        _session_ctrl->setRemoteDeltaTimeStamp(
+            QDateTime::currentMSecsSinceEpoch()-ts);
+    });
+
+    connect(request, &ALoginFtcomRequest::succeed
+        , this, &AServiceController::logoutSucceed);
+    connect(request, &ALoginFtcomRequest::failed
+        , this, &AServiceController::logoutFailed);
+
+    connect(request, &ALoginFtcomRequest::succeed
+        , request, &AServiceController::deleteLater);
+    connect(request, &ALoginFtcomRequest::failed
+        , request, &AServiceController::deleteLater);
+
+    request->send();
 }
 
 

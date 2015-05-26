@@ -4,6 +4,8 @@ TARGET = facetracker
 
 TEMPLATE = app
 
+CONFIG += c++11
+
 TRANSLATIONS = facetracker_ru.ts
 
 SOURCES += main.cpp \
