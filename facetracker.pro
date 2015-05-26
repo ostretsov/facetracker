@@ -27,7 +27,8 @@ SOURCES += main.cpp \
     asessioncontroller.cpp \
     requests/arequest.cpp \
     requests/aftcomrequest.cpp \
-    requests/aloginftcomrequest.cpp
+    requests/aloginftcomrequest.cpp \
+    requests/alogoutftcomrequest.cpp
 
 HEADERS += \
     helpers/asettingshelper.h \
@@ -50,7 +51,8 @@ HEADERS += \
     asessioncontroller.h \
     requests/arequest.h \
     requests/aftcomrequest.h \
-    requests/aloginftcomrequest.h
+    requests/aloginftcomrequest.h \
+    requests/alogoutftcomrequest.h
 
 unix {
     INCLUDEPATH += /usr/include/libappindicator-0.1 \
