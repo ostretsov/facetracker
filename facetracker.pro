@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     arsssqltablecontroller.cpp \
     afacecontroller.cpp \
     afacecapturethread.cpp \
-    asessioncontroller.cpp
+    asessioncontroller.cpp \
+    requests/arequest.cpp
 
 HEADERS += \
     helpers/asettingshelper.h \
@@ -44,7 +45,8 @@ HEADERS += \
     arsssqltablecontroller.h \
     afacecontroller.h \
     afacecapturethread.h \
-    asessioncontroller.h
+    asessioncontroller.h \
+    requests/arequest.h
 
 unix {
     INCLUDEPATH += /usr/include/libappindicator-0.1 \
