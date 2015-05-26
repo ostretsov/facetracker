@@ -1,3 +1,6 @@
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+
 #include "aftcomrequest.h"
 
 // ========================================================================== //
@@ -35,3 +38,30 @@ void AFtcomRequest::setDomain(const QString &domain) {_domain = domain;}
 // Set locale.
 // ========================================================================== //
 void AFtcomRequest::setLocale(const QString &locale) {_locale = locale;}
+
+
+// ========================================================================== //
+// On reply data read.
+// ========================================================================== //
+bool AFtcomRequest::onReplyDataReady(int http_code, QByteArray &data) {
+    int status_code = -1;
+
+    if(!data.isEmpty()) {
+        QJsonDocument doc = QJsonDocument::fromJson(data);
+        if(doc.isObject()) {
+            QJsonObject obj = doc.object();
+
+            if(obj.contains(QStringLiteral("status")))
+                status_code = obj.value(QStringLiteral("status")).toInt();
+
+            if(obj.contains(QStringLiteral("message"))) {
+                const QString msg
+                    = obj.value(QStringLiteral("message")).toString();
+
+                if(!msg.isEmpty()) emit message(msg);
+            }
+        }
+    }
+
+    return (http_code == 200 && status_code == 0) ? true : false;
+}

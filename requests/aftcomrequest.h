@@ -36,6 +36,10 @@ class AFtcomRequest : public ARequest {
         //! Send.
         virtual void send() = 0;
 
+    protected:
+        //! On reply data read.
+        virtual bool onReplyDataReady(int http_code, QByteArray &data);
+
     private:
         QString _domain, _locale;
 
