@@ -223,6 +223,9 @@ void AServiceController::shutdown() {
     if(_tray && _tray->contextMenu())
         delete _tray->contextMenu();
 
+    if(_session_ctrl->isRunning())
+        _session_ctrl->stop();
+
     if(_service_db_ctrl->isOpened())
         _service_db_ctrl->closeConnection();
 }
