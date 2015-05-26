@@ -21,7 +21,7 @@ ALogoutFtcomRequest::ALogoutFtcomRequest(QNetworkAccessManager *nam
 // ========================================================================== //
 void ALogoutFtcomRequest::send() {
     const QString url
-        = QString("http://%1/%2/api/login").arg(domain()).arg(locale());
+        = QString("http://%1/%2/api/logout").arg(domain()).arg(locale());
 
     get(QUrl::fromUserInput(url));
 }
