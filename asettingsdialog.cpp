@@ -55,8 +55,12 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     QPushButton *login_pbut = new QPushButton(this);
     login_pbut->setText(ASettingsDialog::tr("Login"));
 
-    connect(login_pbut, &QPushButton::clicked
-        , AServiceController::instance(), &AServiceController::login);
+    connect(login_pbut, &QPushButton::clicked, [this]() {
+        switch(AServiceController::instance()->isAuthorized()) {
+            case true:  AServiceController::instance()->logout(); break;
+            case false: AServiceController::instance()->login();  break;
+        }
+    });
 
     connect(AServiceController::instance(), &AServiceController::loginStarted
         , [login_pbut]() {login_pbut->setEnabled(false);});
@@ -68,6 +72,18 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
         , [login_pbut]() {
             login_pbut->setEnabled(true);
             login_pbut->setText(ASettingsDialog::tr("Logout"));
+    });
+
+    connect(AServiceController::instance(), &AServiceController::logoutStarted
+        , [login_pbut]() {login_pbut->setEnabled(false);});
+
+    connect(AServiceController::instance(), &AServiceController::logoutFailed
+        , [login_pbut]() {login_pbut->setEnabled(true);});
+
+    connect(AServiceController::instance(), &AServiceController::logoutSucceed
+        , [login_pbut]() {
+            login_pbut->setEnabled(true);
+            login_pbut->setText(ASettingsDialog::tr("Login"));
     });
 
     QLabel *statistic_label = new QLabel(this);

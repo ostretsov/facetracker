@@ -46,6 +46,9 @@ class AServiceController : public QObject {
         //! Get rss.
         ATableController *rss() const;
 
+        //! Get is authorized.
+        bool isAuthorized() const;
+
     public slots:
         //! Login.
         void login();
@@ -70,6 +73,8 @@ class AServiceController : public QObject {
         };
 
         Mode _mode;
+
+        bool _authorized;
 
         AServiceDatabaseController *_service_db_ctrl;
 
