@@ -42,6 +42,9 @@ class AServiceController : public QObject {
         //! Stop.
         void stop();
 
+        //! Show message.
+        void showMessage(const QString &msg);
+
     private:
         enum Mode {
             MODE_GRAY,

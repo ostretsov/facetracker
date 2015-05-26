@@ -40,6 +40,9 @@ QChar messageTypeToChar(QtMsgType type) {
 void handleMessage(QtMsgType type, const QMessageLogContext &ctx
     , const QString &msg) {
 
+    if(QLatin1String(ctx.category) == QLatin1String("app"))
+        AServiceController::instance()->showMessage(msg);
+
     if(AServiceController::instance()->isDatabaseOpened()) {
         ATableController *messages = AServiceController::instance()->messages();
         if(messages) {
@@ -112,7 +115,7 @@ AServiceController *AServiceController::instance() {return _g_service_ctrl;}
 AServiceController::AServiceController(QObject *parent)
     : QObject(parent), _mode(MODE_GRAY)
     , _service_db_ctrl(new AServiceDatabaseController(this))
-    , _session_ctrl(new ASessionController(this)) {
+    , _session_ctrl(new ASessionController(this)), _tray(NULL) {
 
     //qInstallMessageHandler(handleMessage);
 
@@ -182,6 +185,14 @@ void AServiceController::start() {
 void AServiceController::stop() {
     if(_session_ctrl->isRunning())
         _session_ctrl->stop();
+}
+
+
+// ========================================================================== //
+// Show message.
+// ========================================================================== //
+void AServiceController::showMessage(const QString &msg) {
+    if(_tray) _tray->showMessage(qApp->applicationName(), msg);
 }
 
 
