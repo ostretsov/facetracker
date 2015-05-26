@@ -31,12 +31,6 @@ class ARequest : public QObject {
         //! Set NAM.
         void setNam(QNetworkAccessManager *nam);
 
-        //! Get locale.
-        QString locale() const;
-
-        //! Set locale.
-        void setLocale(const QString &locale);
-
     public slots:
         //! GET.
         void get(const QUrl &url);
@@ -50,8 +44,6 @@ class ARequest : public QObject {
 
     private:
         QPointer<QNetworkAccessManager> _nam;
-
-        QString _locale;
 
     private slots:
         //! On reply ready read.
