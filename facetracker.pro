@@ -25,7 +25,9 @@ SOURCES += main.cpp \
     afacecontroller.cpp \
     afacecapturethread.cpp \
     asessioncontroller.cpp \
-    requests/arequest.cpp
+    requests/arequest.cpp \
+    requests/aftcomrequest.cpp \
+    requests/aloginftcomrequest.cpp
 
 HEADERS += \
     helpers/asettingshelper.h \
@@ -46,7 +48,9 @@ HEADERS += \
     afacecontroller.h \
     afacecapturethread.h \
     asessioncontroller.h \
-    requests/arequest.h
+    requests/arequest.h \
+    requests/aftcomrequest.h \
+    requests/aloginftcomrequest.h
 
 unix {
     INCLUDEPATH += /usr/include/libappindicator-0.1 \
