@@ -5,9 +5,15 @@
 #include <QtCore/QObject>
 
 class QNetworkAccessManager;
+class QHttpMultiPart;
 
 class ARequest : public QObject {
     Q_OBJECT
+
+    signals:
+        void readyRead(const QByteArray &data);
+        void succeed();
+        void failed();
 
     public:
         //! Constructor.
@@ -31,10 +37,25 @@ class ARequest : public QObject {
         //! Set locale.
         void setLocale(const QString &locale);
 
+    public slots:
+        //! GET.
+        void get(const QUrl &url);
+
+        //! POST.
+        void post(const QUrl &url, QHttpMultiPart *multi_part);
+
+    protected:
+        //! On reply data read.
+        virtual bool onReplyDataReady(QByteArray &data);
+
     private:
         QPointer<QNetworkAccessManager> _nam;
 
         QString _locale;
+
+    private slots:
+        //! On reply ready read.
+        void onReplyReadyRead();
 
 };
 
