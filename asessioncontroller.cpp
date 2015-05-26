@@ -217,8 +217,8 @@ void ASessionController::onFaceIn() {
 // ========================================================================== //
 void ASessionController::onFaceOut() {
     _detections.append(qMakePair(QDateTime::currentMSecsSinceEpoch(),false));
-    if(_detections.size() > 1 && !_detections.at(_detections.size()-2).second)
-        emit grayActivated();
+
+    emit grayActivated();
 
     cleanDetections(); exportDetectionPeriods();
 }
