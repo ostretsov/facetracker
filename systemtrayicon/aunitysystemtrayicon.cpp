@@ -59,15 +59,18 @@ AUnitySystemTrayIcon::~AUnitySystemTrayIcon() {
 void AUnitySystemTrayIcon::setIcon(const QIcon &icon) {
     const QString tmp_path = QDir::tempPath();
 
+    _tray_fname    = tmp_path + QLatin1String("/tray.png");
+    _balloon_fname = tmp_path + QLatin1String("/tray-balloon.png");
+
     QPixmap pixmap = icon.pixmap(QSize(16,16));
-    pixmap.save(tmp_path + QStringLiteral("/tray.png"), "PNG");
+    pixmap.save(_tray_fname, "PNG");
 
     QPixmap pixmap1 = icon.pixmap(QSize(48,48));
-    pixmap1.save(tmp_path + QStringLiteral("/tray-balloon.png"), "PNG");
+    pixmap1.save(_balloon_fname, "PNG");
 
     app_indicator_set_icon_theme_path(_indicator
         , tmp_path.toStdString().c_str());
-    app_indicator_set_icon(_indicator, "tray-icon");
+    app_indicator_set_icon(_indicator, "tray");
 }
 
 
@@ -82,22 +85,22 @@ void AUnitySystemTrayIcon::setIcon(const QString &fname) {
 
     const QString tmp_path = QDir::tempPath();
 
-    const QString tray_fname
+    _tray_fname
         = tmp_path + QLatin1Char('/') + QFileInfo(fname).baseName()
             + QLatin1String(".png");
 
-    if(!QFile::exists(tray_fname)) {
+    if(!QFile::exists(_tray_fname)) {
         QImage tray_img = img.scaled(QSize(16,16), Qt::KeepAspectRatio);
-        tray_img.save(tray_fname);
+        tray_img.save(_tray_fname);
     }
 
-    const QString balloon_fname
+    _balloon_fname
         = tmp_path + QLatin1Char('/') + QFileInfo(fname).baseName()
             + QLatin1String("-balloon.png");
 
-    if(!QFile::exists(balloon_fname)) {
+    if(!QFile::exists(_balloon_fname)) {
         QImage balloon_img = img.scaled(QSize(48,48), Qt::KeepAspectRatio);
-        balloon_img.save(balloon_fname);
+        balloon_img.save(_balloon_fname);
     }
 
     app_indicator_set_icon_theme_path(_indicator
@@ -185,11 +188,9 @@ void AUnitySystemTrayIcon::showMessage(const QString &title
 
     if(!notify_init("tray")) return;
 
-    QString fname = QDir::tempPath() + QLatin1String("/tray-balloon.png");
-
     NotifyNotification *notify
         = notify_notification_new(title.toStdString().c_str()
-            , msg.toStdString().c_str(), fname.toStdString().c_str());
+            , msg.toStdString().c_str(), _balloon_fname.toStdString().c_str());
 
     notify_notification_show(notify, NULL);
     notify_uninit();

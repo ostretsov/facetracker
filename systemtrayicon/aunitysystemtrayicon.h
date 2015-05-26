@@ -44,6 +44,8 @@ class AUnitySystemTrayIcon : public ASystemTrayIcon {
         virtual void showMessage(const QString &title, const QString &msg);
 
     private:
+        QString _tray_fname, _balloon_fname;
+
         AppIndicator *_indicator;
 
         QMenu *_menu;

@@ -41,6 +41,14 @@ class AServiceController : public QObject {
         void stop();
 
     private:
+        enum Mode {
+            MODE_GRAY,
+            MODE_GREEN,
+            MODE_RED
+        };
+
+        Mode _mode;
+
         AServiceDatabaseController *_service_db_ctrl;
 
         ASessionController *_session_ctrl;

@@ -110,7 +110,8 @@ AServiceController *AServiceController::instance() {return _g_service_ctrl;}
 // Constructor.
 // ========================================================================== //
 AServiceController::AServiceController(QObject *parent)
-    : QObject(parent), _service_db_ctrl(new AServiceDatabaseController(this))
+    : QObject(parent), _mode(MODE_GRAY)
+    , _service_db_ctrl(new AServiceDatabaseController(this))
     , _session_ctrl(new ASessionController(this)) {
 
     //qInstallMessageHandler(handleMessage);
@@ -217,9 +218,11 @@ void AServiceController::shutdown() {
 // On gray activated.
 // ========================================================================== //
 void AServiceController::onGrayActivated() {
+    if(_mode == MODE_GRAY) return;
+
     if(_tray) _tray->setIcon(QStringLiteral(":/images/gray.png"));
 
-    qDebug() << "GRAY";
+    _mode = MODE_GRAY;
 }
 
 
@@ -227,9 +230,11 @@ void AServiceController::onGrayActivated() {
 // On green activated.
 // ========================================================================== //
 void AServiceController::onGreenActivated() {
+    if(_mode == MODE_GREEN) return;
+
     if(_tray) _tray->setIcon(QStringLiteral(":/images/green.png"));
 
-    qDebug() << "GREEN";
+    _mode = MODE_GREEN;
 }
 
 
@@ -237,7 +242,13 @@ void AServiceController::onGreenActivated() {
 // On red activated.
 // ========================================================================== //
 void AServiceController::onRedActivated() {
-    if(_tray) _tray->setIcon(QStringLiteral(":/images/red.png"));
+    if(_tray) {
+        if(_mode != MODE_RED)
+            _tray->setIcon(QStringLiteral(":/images/red.png"));
 
-    qDebug() << "RED";
+        _tray->showMessage(qApp->applicationName()
+            , AServiceController::tr("It is time to afford to rest!"));
+    }
+
+    _mode = MODE_RED;
 }
