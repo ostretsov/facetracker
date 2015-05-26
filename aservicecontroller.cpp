@@ -131,12 +131,7 @@ AServiceController::AServiceController(QObject *parent)
 
     createTray();
 
-// TODO: for tests only, remove later.
-//ASettingsDialog dlg;
-//dlg.exec();
-//QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
-QMetaObject::invokeMethod(_session_ctrl, "start", Qt::QueuedConnection);
-//
+    QMetaObject::invokeMethod(this, "showSettingsDialog", Qt::QueuedConnection);
 }
 
 
@@ -175,13 +170,19 @@ ATableController *AServiceController::rss() const {
 // ========================================================================== //
 // Start.
 // ========================================================================== //
-void AServiceController::start() {}
+void AServiceController::start() {
+    if(!_session_ctrl->isRunning())
+        _session_ctrl->start();
+}
 
 
 // ========================================================================== //
 // Stop.
 // ========================================================================== //
-void AServiceController::stop() {}
+void AServiceController::stop() {
+    if(_session_ctrl->isRunning())
+        _session_ctrl->stop();
+}
 
 
 // ========================================================================== //
@@ -199,6 +200,19 @@ void AServiceController::createTray() {
     _tray->setIcon(QStringLiteral(":/images/gray.png"));
     _tray->setContextMenu(tray_menu);
     _tray->show();
+}
+
+
+// ========================================================================== //
+// Show settings dialog.
+// ========================================================================== //
+void AServiceController::showSettingsDialog() {
+    stop();
+
+    ASettingsDialog dlg;
+    dlg.exec();
+
+    start();
 }
 
 

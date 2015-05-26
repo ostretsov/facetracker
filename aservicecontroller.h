@@ -59,6 +59,9 @@ class AServiceController : public QObject {
         void createTray();
 
     private slots:
+        //! Show settings dialog.
+        void showSettingsDialog();
+
         //! Shutdown.
         void shutdown();
 
