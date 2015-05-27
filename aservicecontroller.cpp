@@ -14,6 +14,7 @@
 
 #include "database/atablecontroller.h"
 
+#include "requests/aversionftcomrequest.h"
 #include "requests/alogoutftcomrequest.h"
 #include "requests/aloginftcomrequest.h"
 #include "requests/asyncftcomrequest.h"
@@ -154,6 +155,7 @@ AServiceController::AServiceController(QObject *parent)
     connect(_one_min_timer, SIGNAL(timeout()), this, SLOT(onOneMinTimeout()));
 
     QMetaObject::invokeMethod(this, "showSettingsDialog", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this, "version", Qt::QueuedConnection);
 }
 
 
@@ -313,7 +315,7 @@ void AServiceController::logout() {
             QDateTime::currentMSecsSinceEpoch()-ts);
     });
 
-    connect(request, &ALoginFtcomRequest::message
+    connect(request, &ALogoutFtcomRequest::message
         , [this](const QString &msg) {showMessage(msg);});
 
     connect(request, &ALogoutFtcomRequest::succeed, [this,request]() {
@@ -347,20 +349,20 @@ void AServiceController::sync() {
     request->setDomain(domain);
     request->setLocale(locale);
 
-    connect(request, &ALogoutFtcomRequest::serverTime
+    connect(request, &ASyncFtcomRequest::serverTime
         , [this](const qint64 &ts) {
         _session_ctrl->setRemoteDeltaTimeStamp(
             QDateTime::currentMSecsSinceEpoch()-ts);
     });
 
-    connect(request, &ALoginFtcomRequest::message
+    connect(request, &ASyncFtcomRequest::message
         , [this](const QString &msg) {showMessage(msg);});
 
-    connect(request, &ALogoutFtcomRequest::succeed, [this,request]() {
+    connect(request, &ASyncFtcomRequest::succeed, [this,request]() {
         emit syncSucceed(); request->deleteLater();
     });
 
-    connect(request, &ALogoutFtcomRequest::failed, [this,request]() {
+    connect(request, &ASyncFtcomRequest::failed, [this,request]() {
         emit syncFailed(); request->deleteLater();
     });
 
@@ -414,6 +416,75 @@ void AServiceController::sync() {
     else {emit syncSucceed(); request->deleteLater();}
 
     QMetaObject::invokeMethod(statistic(), "submitAll", Qt::QueuedConnection);
+}
+
+
+// ========================================================================== //
+// Version.
+// ========================================================================== //
+void AServiceController::version() {
+    emit versionStarted();
+
+    const qint64 version_last_check
+         = ASettingsHelper::value(QStringLiteral("version-last-check")
+            , QVariant(0)).toLongLong();
+
+    if(QDateTime::fromMSecsSinceEpoch(version_last_check)
+        .daysTo(QDateTime::currentDateTime()) < 7) {
+
+        emit versionSucceed(); return;
+    }
+
+    const QString domain
+        = ASettingsHelper::value(QStringLiteral("domain")
+            , QVariant(QStringLiteral("face-tracker.com"))).toString();
+
+    const QString locale
+        = ASettingsHelper::value(QStringLiteral("locale")
+            , QVariant(QStringLiteral("en"))).toString();
+
+    AVersionFtcomRequest *request = new AVersionFtcomRequest(this);
+    request->setNam(_nam);
+    request->setDomain(domain);
+    request->setLocale(locale);
+
+    connect(request, &AVersionFtcomRequest::serverTime
+        , [this](const qint64 &ts) {
+        _session_ctrl->setRemoteDeltaTimeStamp(
+            QDateTime::currentMSecsSinceEpoch()-ts);
+    });
+
+    connect(request, &AVersionFtcomRequest::message
+        , [this](const QString &msg) {showMessage(msg);});
+
+    connect(request, &AVersionFtcomRequest::version
+        , [this](int new_ver) {
+
+        ASettingsHelper::setValue(QStringLiteral("version-last-check")
+            , QVariant(QDateTime::currentMSecsSinceEpoch()));
+
+        const int cur_ver
+            = ASettingsHelper::value(QStringLiteral("version")
+                , QVariant(1)).toInt();
+
+        if(cur_ver < new_ver) {
+            ASettingsHelper::setValue(QStringLiteral("version")
+                , QVariant(new_ver));
+
+            showMessage(AServiceController::tr(
+                "Available new application version %1!").arg(new_ver));
+        }
+    });
+
+    connect(request, &AVersionFtcomRequest::succeed, [this,request]() {
+        emit versionSucceed(); request->deleteLater();
+    });
+
+    connect(request, &AVersionFtcomRequest::failed, [this,request]() {
+        emit versionFailed(); request->deleteLater();
+    });
+
+    request->send();
 }
 
 

@@ -1,3 +1,5 @@
+#include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
 #include <QtCore/QUrl>
 
 #include "aversionftcomrequest.h"
@@ -24,4 +26,21 @@ void AVersionFtcomRequest::send() {
         = QString("http://%1/%2/api/version").arg(domain()).arg(locale());
 
     get(QUrl::fromUserInput(url));
+}
+
+
+// ========================================================================== //
+// On reply data read.
+// ========================================================================== //
+bool AVersionFtcomRequest::onReplyDataReady(int http_code, QByteArray &data) {
+    if(!data.isEmpty()) {
+        QJsonDocument doc = QJsonDocument::fromJson(data);
+        if(doc.isObject()) {
+            QJsonObject obj = doc.object();
+            if(obj.contains(QStringLiteral("version")))
+                emit version(obj.value(QStringLiteral("version")).toInt());
+        }
+    }
+
+    return AFtcomRequest::onReplyDataReady(http_code, data);
 }

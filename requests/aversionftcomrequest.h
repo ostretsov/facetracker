@@ -6,6 +6,9 @@
 class AVersionFtcomRequest : public AFtcomRequest {
     Q_OBJECT
 
+    signals:
+        void version(int value);
+
     public:
         //! Constructor.
         explicit AVersionFtcomRequest(QObject *parent = NULL);
@@ -20,6 +23,10 @@ class AVersionFtcomRequest : public AFtcomRequest {
     public slots:
         //! Send.
         virtual void send();
+
+    protected:
+        //! On reply data read.
+        virtual bool onReplyDataReady(int http_code, QByteArray &data);
 
 };
 

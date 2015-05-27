@@ -30,6 +30,10 @@ class AServiceController : public QObject {
         void syncSucceed();
         void syncFailed();
 
+        void versionStarted();
+        void versionSucceed();
+        void versionFailed();
+
         void trChanged();
 
     public:
@@ -69,6 +73,9 @@ class AServiceController : public QObject {
 
         //! Sync.
         void sync();
+
+        //! Version.
+        void version();
 
         //! Start.
         void start();
