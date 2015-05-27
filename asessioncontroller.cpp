@@ -6,6 +6,8 @@
 
 #include "database/atablecontroller.h"
 
+#include "helpers/asettingshelper.h"
+
 #include "asessioncontroller.h"
 #include "aservicecontroller.h"
 #include "afacecontroller.h"
@@ -159,8 +161,11 @@ void ASessionController::exportDetectionPeriods() {
         }
     }
 
+    const QString username
+        = ASettingsHelper::value(QStringLiteral("username")).toString();
+
     QVariantHash hash;
-    hash.insert(QStringLiteral("username"), QStringLiteral("unknown"));
+    hash.insert(QStringLiteral("username"), username);
     hash.insert(QStringLiteral("period_from")
         , period.first().first+_remote_delta_ts);
 
