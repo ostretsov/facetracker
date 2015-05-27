@@ -90,9 +90,12 @@ class AServiceController : public QObject {
 
         QPointer<ASystemTrayIcon> _tray;
 
-        QAction *_settings_action;
+        QAction *_settings_action, *_quit_action;
 
         QTranslator *_qt_tr, *_app_tr;
+
+        //! Create actions.
+        void createActions();
 
         //! Create tray.
         void createTray();

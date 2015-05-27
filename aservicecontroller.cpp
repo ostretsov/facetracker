@@ -130,7 +130,7 @@ AServiceController::AServiceController(QObject *parent)
 
     AServiceMetatypeController::registerMetaTypes();
 
-    installTranslator();
+    createActions(); installTranslator(); createTray();
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(shutdown()));
 
@@ -142,8 +142,6 @@ AServiceController::AServiceController(QObject *parent)
         , this, SLOT(onGreenActivated()));
     connect(_session_ctrl, SIGNAL(redActivated())
         , this, SLOT(onRedActivated()));
-
-    createTray();
 
     QMetaObject::invokeMethod(this, "showSettingsDialog", Qt::QueuedConnection);
 }
@@ -214,6 +212,18 @@ void AServiceController::installTranslator() {
 
         if(_app_tr->load(qApp->applicationName()+QLatin1Char('_')+locale, path))
             qApp->installTranslator(_app_tr);
+    }
+
+    _settings_action->setText(AServiceController::tr("Settings..."));
+    _quit_action->setText(AServiceController::tr("Quit"));
+
+    if(_tray) {
+        if(_tray->contextMenu())
+            delete _tray->contextMenu();
+
+        delete _tray;
+
+        createTray();
     }
 
     emit trChanged();
@@ -326,14 +336,24 @@ void AServiceController::showMessage(const QString &msg) {
 
 
 // ========================================================================== //
-// Create tray.
+// Create actions.
 // ========================================================================== //
-void AServiceController::createTray() {
+void AServiceController::createActions() {
     _settings_action = new QAction(this);
     _settings_action->setText(AServiceController::tr("Settings..."));
     connect(_settings_action, SIGNAL(triggered())
         , this, SLOT(showSettingsDialog()));
 
+    _quit_action = new QAction(this);
+    _quit_action->setText(AServiceController::tr("Quit"));
+    connect(_quit_action, SIGNAL(triggered()), qApp, SLOT(quit()));
+}
+
+
+// ========================================================================== //
+// Create tray.
+// ========================================================================== //
+void AServiceController::createTray() {
     const QString app_name
         = qApp->applicationName() + QLatin1String(" v")
             + qApp->applicationVersion();
@@ -341,7 +361,7 @@ void AServiceController::createTray() {
     QMenu *tray_menu = new QMenu(app_name);
     tray_menu->addAction(_settings_action);
     tray_menu->addSeparator();
-    tray_menu->addAction(AServiceController::tr("Quit"), qApp, SLOT(quit()));
+    tray_menu->addAction(_quit_action);
 
     _tray = ASystemTrayIcon::create(this);
     _tray->setIcon(QStringLiteral(":/images/gray.png"));
