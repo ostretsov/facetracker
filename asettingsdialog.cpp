@@ -161,6 +161,18 @@ ASettingsDialog::~ASettingsDialog() {
 
 
 // ========================================================================== //
+// Set widgets enabled.
+// ========================================================================== //
+void ASettingsDialog::setWidgetsEnabled(bool enabled) {
+    _lang_cbox->setEnabled(enabled);
+    _user_ledit->setEnabled(enabled);
+    _pswd_ledit->setEnabled(enabled);
+    _working_period_spbox->setEnabled(enabled);
+    _login_pbut->setEnabled(enabled);
+}
+
+
+// ========================================================================== //
 // Load settings.
 // ========================================================================== //
 void ASettingsDialog::loadSettings() {
@@ -187,14 +199,14 @@ void ASettingsDialog::loadSettings() {
 // ========================================================================== //
 // On log in out started.
 // ========================================================================== //
-void ASettingsDialog::onLogInOutStarted() {_login_pbut->setEnabled(false);}
+void ASettingsDialog::onLogInOutStarted() {setWidgetsEnabled(false);}
 
 
 // ========================================================================== //
 // On log in out succeed.
 // ========================================================================== //
 void ASettingsDialog::onLogInOutSucceed() {
-    _login_pbut->setEnabled(true);
+    setWidgetsEnabled(true);
 
     switch(AServiceController::instance()->isAuthorized()) {
         case true:  _login_pbut->setText(ASettingsDialog::tr("Logout")); break;
@@ -206,4 +218,4 @@ void ASettingsDialog::onLogInOutSucceed() {
 // ========================================================================== //
 // On log in out failed.
 // ========================================================================== //
-void ASettingsDialog::onLogInOutFailed() {_login_pbut->setEnabled(true);}
+void ASettingsDialog::onLogInOutFailed() {setWidgetsEnabled(true);}

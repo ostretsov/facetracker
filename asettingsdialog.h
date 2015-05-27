@@ -34,6 +34,9 @@ class ASettingsDialog : public QDialog {
 
         QPushButton *_login_pbut;
 
+        //! Set widgets enabled.
+        void setWidgetsEnabled(bool enabled);
+
     private slots:
         //! Load settings.
         void loadSettings();
