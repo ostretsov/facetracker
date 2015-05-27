@@ -1,5 +1,6 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QGlobalStatic>
+#include <QtCore/QTranslator>
 #include <QtCore/QDateTime>
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
@@ -123,11 +124,13 @@ AServiceController::AServiceController(QObject *parent)
     : QObject(parent), _mode(MODE_GRAY), _authorized(false)
     , _service_db_ctrl(new AServiceDatabaseController(this))
     , _session_ctrl(new ASessionController(this))
-    , _nam(new QNetworkAccessManager(this)) {
+    , _nam(new QNetworkAccessManager(this)), _qt_tr(NULL), _app_tr(NULL) {
 
     //qInstallMessageHandler(handleMessage);
 
     AServiceMetatypeController::registerMetaTypes();
+
+    installTranslator();
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(shutdown()));
 
@@ -185,10 +188,51 @@ bool AServiceController::isAuthorized() const {return _authorized;}
 
 
 // ========================================================================== //
+// Install translator.
+// ========================================================================== //
+void AServiceController::installTranslator() {
+    const QString locale
+        = ASettingsHelper::value(QStringLiteral("locale")
+            , QVariant(QStringLiteral("en"))).toString();
+
+    if(locale == QLatin1String("en")) {
+        if(_qt_tr) qApp->removeTranslator(_qt_tr);
+        if(_app_tr) qApp->removeTranslator(_app_tr);
+
+    } else {
+        if(_qt_tr) qApp->removeTranslator(_qt_tr);
+        else _qt_tr = new QTranslator(this);
+
+        if(_app_tr) qApp->removeTranslator(_app_tr);
+        else _app_tr = new QTranslator(this);
+
+        const QString path
+            = qApp->applicationDirPath() + QLatin1String("/translations");
+
+        if(_qt_tr->load(QLatin1String("qt_")+locale, path))
+            qApp->installTranslator(_qt_tr);
+
+        if(_app_tr->load(qApp->applicationName()+QLatin1Char('_')+locale, path))
+            qApp->installTranslator(_app_tr);
+    }
+
+    emit trChanged();
+}
+
+
+// ========================================================================== //
 // Login.
 // ========================================================================== //
 void AServiceController::login() {
     emit loginStarted();
+
+    const QString domain
+        = ASettingsHelper::value(QStringLiteral("domain")
+            , QVariant(QStringLiteral("face-tracker.com"))).toString();
+
+    const QString locale
+        = ASettingsHelper::value(QStringLiteral("locale")
+            , QVariant(QStringLiteral("en"))).toString();
 
     const QString username
         = ASettingsHelper::value(QStringLiteral("username")).toString();
@@ -197,8 +241,8 @@ void AServiceController::login() {
 
     ALoginFtcomRequest *request = new ALoginFtcomRequest(this);
     request->setNam(_nam);
-    request->setDomain(QStringLiteral("face-tracker.com"));
-    request->setLocale(QStringLiteral("en"));
+    request->setDomain(domain);
+    request->setLocale(locale);
     request->setUsername(username);
     request->setPassword(password);
 
@@ -320,9 +364,7 @@ void AServiceController::setActionsEnabled(bool enabled) {
 void AServiceController::showSettingsDialog() {
     setActionsEnabled(false);
 
-    //stop();
-    ASettingsDialog().exec();
-    //start();
+    stop(); ASettingsDialog().exec(); start();
 
     setActionsEnabled(true);
 }

@@ -22,13 +22,19 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     setWindowTitle(ASettingsDialog::tr("Settings"));
 
     _capture->setCaptureHidden(false);
+    QMetaObject::invokeMethod(_capture, "start", Qt::QueuedConnection);
 
     QLabel *lang_label = new QLabel(this);
     lang_label->setText(ASettingsDialog::tr("Language:"));
 
+    const QString locale
+        = ASettingsHelper::value(QStringLiteral("locale")
+            , QVariant(QStringLiteral("en"))).toString();
+
     _lang_cbox = new QComboBox(this);
     _lang_cbox->addItem(QStringLiteral("Eng"), QStringLiteral("en"));
     _lang_cbox->addItem(QStringLiteral("Rus"), QStringLiteral("ru"));
+    _lang_cbox->setCurrentIndex(_lang_cbox->findData(locale));
 
     QLabel *user_label = new QLabel(this);
     user_label->setText(ASettingsDialog::tr("Username:"));
@@ -48,9 +54,16 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     _working_period_spbox = new QSpinBox(this);
     _working_period_spbox->setSuffix(ASettingsDialog::tr(" min."));
     _working_period_spbox->setRange(1,60);
+    _working_period_spbox->setValue(
+        ASettingsHelper::value(QStringLiteral("working-period"), 30).toInt());
 
     _register_label = new QLabel(this);
     _register_label->setOpenExternalLinks(true);
+    _register_label->setText(
+        QString("<a href=\"%1\">%2</a>")
+            .arg(ASettingsHelper::value(QStringLiteral("registration-link"))
+                .toString())
+            .arg(ASettingsDialog::tr("Register")));
 
     _login_pbut = new QPushButton(this);
     connect(_login_pbut, &QPushButton::clicked, [this]() {
@@ -145,8 +158,45 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
         break;
     }
 
-    //QMetaObject::invokeMethod(this, "loadSettings", Qt::QueuedConnection);
-    QMetaObject::invokeMethod(_capture, "start", Qt::QueuedConnection);
+    connect(_lang_cbox
+        , static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
+        , [this, lang_label, user_label, pswd_label
+            , working_period_label, statistic_label](int idx) {
+
+        ASettingsHelper::setValue(ASettingsDialog::tr("locale")
+            , _lang_cbox->itemData(idx));
+
+        AServiceController::instance()->installTranslator();
+
+        setWindowTitle(ASettingsDialog::tr("Settings"));
+        lang_label->setText(ASettingsDialog::tr("Language:"));
+        user_label->setText(ASettingsDialog::tr("Username:"));
+        pswd_label->setText(ASettingsDialog::tr("Password:"));
+
+        working_period_label->setText(
+            ASettingsDialog::tr("No more in front\nof webcamera:"));
+        _working_period_spbox->setSuffix(ASettingsDialog::tr(" min."));
+
+        _register_label->setText(
+            QString("<a href=\"%1\">%2</a>")
+                .arg(ASettingsHelper::value(QStringLiteral("registration-link"))
+                    .toString())
+                .arg(ASettingsDialog::tr("Register")));
+
+        switch(AServiceController::instance()->isAuthorized()) {
+            case true:
+                _login_pbut->setText(ASettingsDialog::tr("Logout"));
+            break;
+
+            case false:
+                _login_pbut->setText(ASettingsDialog::tr("Login"));
+            break;
+        }
+
+        statistic_label->setText(
+            ASettingsDialog::tr("Statistic available" \
+                " <a href=\"http://google.ru\">at link</a>."));
+    });
 }
 
 
@@ -177,30 +227,6 @@ void ASettingsDialog::setWidgetsEnabled(bool enabled) {
 void ASettingsDialog::setAuthWidgetsEnabled(bool enabled) {
     _user_ledit->setEnabled(enabled);
     _pswd_ledit->setEnabled(enabled);
-}
-
-
-// ========================================================================== //
-// Load settings.
-// ========================================================================== //
-void ASettingsDialog::loadSettings() {
-    _lang_cbox->setCurrentText(
-        ASettingsHelper::value(QStringLiteral("language")
-            , QStringLiteral("Eng")).toString());
-
-    _user_ledit->setText(
-        ASettingsHelper::value(QStringLiteral("username")).toString());
-    _pswd_ledit->setText(
-        ASettingsHelper::value(QStringLiteral("password")).toString());
-
-    _working_period_spbox->setValue(
-        ASettingsHelper::value(QStringLiteral("working-period"), 30).toInt());
-
-    _register_label->setText(
-        QString("<a href=\"%1\">%2</a>")
-            .arg(ASettingsHelper::value(QStringLiteral("registration-link"))
-                .toString())
-            .arg(ASettingsDialog::tr("Register")));
 }
 
 

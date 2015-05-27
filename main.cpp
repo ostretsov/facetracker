@@ -1,7 +1,5 @@
 #include <QtCore/QLoggingCategory>
-#include <QtCore/QTranslator>
 #include <QtCore/QTextCodec>
-#include <QtCore/QLocale>
 
 #include <QtWidgets/QApplication>
 
@@ -48,23 +46,10 @@ int main(int argc, char *argv[]) {
     app.setProperty("conf"
         , app.applicationDirPath() + QLatin1String("/facetracker.ini"));
 
-    QLocale::setDefault(QLocale(QLocale::Russian,QLocale::RussianFederation));
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
 
     QLoggingCategory::setFilterRules(
         QStringLiteral("qt.network.ssl.warning=false"));
-
-    const QString locale_name = QLocale::system().name();
-
-    QTranslator qt_translator;
-    if(qt_translator.load(QLatin1String("qt_") + locale_name
-        , app.applicationDirPath() + QLatin1String("/translations")))
-        app.installTranslator(&qt_translator);
-
-    QTranslator app_translator;
-    if(app_translator.load(QLatin1String("facetracker_") + locale_name
-        , app.applicationDirPath() + QLatin1String("/translations")))
-        app.installTranslator(&app_translator);
 
     checkApplicationVersion(app);
 

@@ -41,9 +41,6 @@ class ASettingsDialog : public QDialog {
         void setAuthWidgetsEnabled(bool enabled);
 
     private slots:
-        //! Load settings.
-        void loadSettings();
-
         //! On log in out started.
         void onLogInOutStarted();
 

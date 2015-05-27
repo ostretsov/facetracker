@@ -5,6 +5,7 @@
 #include <QtCore/QObject>
 
 class QNetworkAccessManager;
+class QTranslator;
 class QAction;
 
 class AServiceDatabaseController;
@@ -23,6 +24,8 @@ class AServiceController : public QObject {
         void logoutStarted();
         void logoutSucceed();
         void logoutFailed();
+
+        void trChanged();
 
     public:
         //! Get instance.
@@ -50,6 +53,9 @@ class AServiceController : public QObject {
         bool isAuthorized() const;
 
     public slots:
+        //! Install translator.
+        void installTranslator();
+
         //! Login.
         void login();
 
@@ -85,6 +91,8 @@ class AServiceController : public QObject {
         QPointer<ASystemTrayIcon> _tray;
 
         QAction *_settings_action;
+
+        QTranslator *_qt_tr, *_app_tr;
 
         //! Create tray.
         void createTray();
