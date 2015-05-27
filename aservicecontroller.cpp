@@ -16,6 +16,8 @@
 
 #include "systemtrayicon/asystemtrayicon.h"
 
+#include "helpers/asettingshelper.h"
+
 #include "aservicecontroller.h"
 #include "aservicemetatypecontroller.h"
 #include "aservicedatabasecontroller.h"
@@ -188,12 +190,17 @@ bool AServiceController::isAuthorized() const {return _authorized;}
 void AServiceController::login() {
     emit loginStarted();
 
+    const QString username
+        = ASettingsHelper::value(QStringLiteral("username")).toString();
+    const QString password
+        = ASettingsHelper::value(QStringLiteral("password")).toString();
+
     ALoginFtcomRequest *request = new ALoginFtcomRequest(this);
     request->setNam(_nam);
     request->setDomain(QStringLiteral("face-tracker.com"));
     request->setLocale(QStringLiteral("en"));
-    request->setUsername(QStringLiteral("OstretsovAA@gmail.com"));
-    request->setPassword(QStringLiteral("1234"));
+    request->setUsername(username);
+    request->setPassword(password);
 
     connect(request, &ALoginFtcomRequest::serverTime
         , [this](const qint64 &ts) {
@@ -252,7 +259,7 @@ void AServiceController::logout() {
 // Start.
 // ========================================================================== //
 void AServiceController::start() {
-    if(!_session_ctrl->isRunning())
+    if(_authorized && !_session_ctrl->isRunning())
         _session_ctrl->start();
 }
 

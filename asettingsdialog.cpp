@@ -53,12 +53,20 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     _register_label->setOpenExternalLinks(true);
 
     QPushButton *login_pbut = new QPushButton(this);
-    login_pbut->setText(ASettingsDialog::tr("Login"));
-
     connect(login_pbut, &QPushButton::clicked, [this]() {
         switch(AServiceController::instance()->isAuthorized()) {
-            case true:  AServiceController::instance()->logout(); break;
-            case false: AServiceController::instance()->login();  break;
+            case true:
+                AServiceController::instance()->logout();
+            break;
+
+            case false:
+                ASettingsHelper::setValue(ASettingsDialog::tr("username")
+                    , QVariant(_user_ledit->text()));
+                ASettingsHelper::setValue(ASettingsDialog::tr("password")
+                    , QVariant(_pswd_ledit->text()));
+
+                AServiceController::instance()->login();
+            break;
         }
     });
 
@@ -120,7 +128,28 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
 
     setLayout(layout);
 
-    QMetaObject::invokeMethod(this, "loadSettings", Qt::QueuedConnection);
+    const QString username
+        = ASettingsHelper::value(QStringLiteral("username")).toString();
+    const QString password
+        = ASettingsHelper::value(QStringLiteral("password")).toString();
+
+    _user_ledit->setText(username);
+    _pswd_ledit->setText(password);
+
+    switch(AServiceController::instance()->isAuthorized()) {
+        case true:
+            login_pbut->setText(ASettingsDialog::tr("Logout"));
+        break;
+
+        case false:
+            login_pbut->setText(ASettingsDialog::tr("Login"));
+
+            if(!(username.isEmpty() && password.isEmpty()))
+                AServiceController::instance()->login();
+        break;
+    }
+
+    //QMetaObject::invokeMethod(this, "loadSettings", Qt::QueuedConnection);
     QMetaObject::invokeMethod(_capture, "start", Qt::QueuedConnection);
 }
 
