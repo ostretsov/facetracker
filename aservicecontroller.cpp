@@ -320,7 +320,9 @@ void AServiceController::setActionsEnabled(bool enabled) {
 void AServiceController::showSettingsDialog() {
     setActionsEnabled(false);
 
-    stop(); ASettingsDialog().exec(); start();
+    //stop();
+    ASettingsDialog().exec();
+    //start();
 
     setActionsEnabled(true);
 }
@@ -335,6 +337,8 @@ void AServiceController::shutdown() {
 
     if(_session_ctrl->isRunning())
         _session_ctrl->stop();
+
+    if(_nam) delete _nam;
 
     if(_service_db_ctrl->isOpened())
         _service_db_ctrl->closeConnection();
