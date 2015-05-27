@@ -52,11 +52,12 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     _register_label = new QLabel(this);
     _register_label->setOpenExternalLinks(true);
 
-    QPushButton *login_pbut = new QPushButton(this);
-    connect(login_pbut, &QPushButton::clicked, [this]() {
+    _login_pbut = new QPushButton(this);
+    connect(_login_pbut, &QPushButton::clicked, [this]() {
         switch(AServiceController::instance()->isAuthorized()) {
             case true:
-                AServiceController::instance()->logout();
+                QMetaObject::invokeMethod(AServiceController::instance()
+                    , "logout", Qt::QueuedConnection);
             break;
 
             case false:
@@ -65,33 +66,10 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
                 ASettingsHelper::setValue(ASettingsDialog::tr("password")
                     , QVariant(_pswd_ledit->text()));
 
-                AServiceController::instance()->login();
+                QMetaObject::invokeMethod(AServiceController::instance()
+                    , "login", Qt::QueuedConnection);
             break;
         }
-    });
-
-    connect(AServiceController::instance(), &AServiceController::loginStarted
-        , [login_pbut]() {login_pbut->setEnabled(false);});
-
-    connect(AServiceController::instance(), &AServiceController::loginFailed
-        , [login_pbut]() {login_pbut->setEnabled(true);});
-
-    connect(AServiceController::instance(), &AServiceController::loginSucceed
-        , [login_pbut]() {
-            login_pbut->setEnabled(true);
-            login_pbut->setText(ASettingsDialog::tr("Logout"));
-    });
-
-    connect(AServiceController::instance(), &AServiceController::logoutStarted
-        , [login_pbut]() {login_pbut->setEnabled(false);});
-
-    connect(AServiceController::instance(), &AServiceController::logoutFailed
-        , [login_pbut]() {login_pbut->setEnabled(true);});
-
-    connect(AServiceController::instance(), &AServiceController::logoutSucceed
-        , [login_pbut]() {
-            login_pbut->setEnabled(true);
-            login_pbut->setText(ASettingsDialog::tr("Login"));
     });
 
     QLabel *statistic_label = new QLabel(this);
@@ -120,13 +98,27 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     layout->addWidget(working_period_label, 3, 0, 1, 1);
     layout->addWidget(_working_period_spbox, 3, 1, 1, 1);
     layout->addWidget(_register_label, 1, 3, 1, 1);
-    layout->addWidget(login_pbut, 2, 3, 1, 1);
+    layout->addWidget(_login_pbut, 2, 3, 1, 1);
     layout->addWidget(statistic_label, 4, 1, 1, 2);
     layout->addWidget(img_wdg, 5, 0, 1, 4);
     layout->addWidget(rss_label, 6, 0, 1, 4);
     layout->setColumnStretch(2,2);
 
     setLayout(layout);
+
+    connect(AServiceController::instance(), &AServiceController::loginStarted
+        , this, &ASettingsDialog::onLogInOutStarted);
+    connect(AServiceController::instance(), &AServiceController::loginSucceed
+        , this, &ASettingsDialog::onLogInOutSucceed);
+    connect(AServiceController::instance(), &AServiceController::loginFailed
+        , this, &ASettingsDialog::onLogInOutFailed);
+
+    connect(AServiceController::instance(), &AServiceController::logoutStarted
+        , this, &ASettingsDialog::onLogInOutStarted);
+    connect(AServiceController::instance(), &AServiceController::logoutSucceed
+        , this, &ASettingsDialog::onLogInOutSucceed);
+    connect(AServiceController::instance(), &AServiceController::logoutFailed
+        , this, &ASettingsDialog::onLogInOutFailed);
 
     const QString username
         = ASettingsHelper::value(QStringLiteral("username")).toString();
@@ -138,14 +130,17 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
 
     switch(AServiceController::instance()->isAuthorized()) {
         case true:
-            login_pbut->setText(ASettingsDialog::tr("Logout"));
+            _login_pbut->setText(ASettingsDialog::tr("Logout"));
         break;
 
         case false:
-            login_pbut->setText(ASettingsDialog::tr("Login"));
+            _login_pbut->setText(ASettingsDialog::tr("Login"));
 
-            if(!(username.isEmpty() && password.isEmpty()))
-                AServiceController::instance()->login();
+            if(!(username.isEmpty() && password.isEmpty())) {
+                QMetaObject::invokeMethod(AServiceController::instance()
+                    , "login", Qt::QueuedConnection);
+            }
+
         break;
     }
 
@@ -187,3 +182,28 @@ void ASettingsDialog::loadSettings() {
                 .toString())
             .arg(ASettingsDialog::tr("Register")));
 }
+
+
+// ========================================================================== //
+// On log in out started.
+// ========================================================================== //
+void ASettingsDialog::onLogInOutStarted() {_login_pbut->setEnabled(false);}
+
+
+// ========================================================================== //
+// On log in out succeed.
+// ========================================================================== //
+void ASettingsDialog::onLogInOutSucceed() {
+    _login_pbut->setEnabled(true);
+
+    switch(AServiceController::instance()->isAuthorized()) {
+        case true:  _login_pbut->setText(ASettingsDialog::tr("Logout")); break;
+        case false: _login_pbut->setText(ASettingsDialog::tr("Login")); break;
+    }
+}
+
+
+// ========================================================================== //
+// On log in out failed.
+// ========================================================================== //
+void ASettingsDialog::onLogInOutFailed() {_login_pbut->setEnabled(true);}

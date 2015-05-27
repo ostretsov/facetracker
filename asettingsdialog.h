@@ -3,6 +3,7 @@
 
 #include <QtWidgets/QDialog>
 
+class QPushButton;
 class QComboBox;
 class QLineEdit;
 class QSpinBox;
@@ -31,9 +32,20 @@ class ASettingsDialog : public QDialog {
 
         QLabel *_register_label;
 
+        QPushButton *_login_pbut;
+
     private slots:
         //! Load settings.
         void loadSettings();
+
+        //! On log in out started.
+        void onLogInOutStarted();
+
+        //! On log in out succeed.
+        void onLogInOutSucceed();
+
+        //! On log in out failed.
+        void onLogInOutFailed();
 
 };
 
