@@ -109,16 +109,16 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     connect(AServiceController::instance(), &AServiceController::loginStarted
         , this, &ASettingsDialog::onLogInOutStarted);
     connect(AServiceController::instance(), &AServiceController::loginSucceed
-        , this, &ASettingsDialog::onLogInOutSucceed);
+        , this, &ASettingsDialog::onLogInOutFinished);
     connect(AServiceController::instance(), &AServiceController::loginFailed
-        , this, &ASettingsDialog::onLogInOutFailed);
+        , this, &ASettingsDialog::onLogInOutFinished);
 
     connect(AServiceController::instance(), &AServiceController::logoutStarted
         , this, &ASettingsDialog::onLogInOutStarted);
     connect(AServiceController::instance(), &AServiceController::logoutSucceed
-        , this, &ASettingsDialog::onLogInOutSucceed);
+        , this, &ASettingsDialog::onLogInOutFinished);
     connect(AServiceController::instance(), &AServiceController::logoutFailed
-        , this, &ASettingsDialog::onLogInOutFailed);
+        , this, &ASettingsDialog::onLogInOutFinished);
 
     const QString username
         = ASettingsHelper::value(QStringLiteral("username")).toString();
@@ -131,6 +131,7 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     switch(AServiceController::instance()->isAuthorized()) {
         case true:
             _login_pbut->setText(ASettingsDialog::tr("Logout"));
+            setAuthWidgetsEnabled(false);
         break;
 
         case false:
@@ -165,10 +166,17 @@ ASettingsDialog::~ASettingsDialog() {
 // ========================================================================== //
 void ASettingsDialog::setWidgetsEnabled(bool enabled) {
     _lang_cbox->setEnabled(enabled);
-    _user_ledit->setEnabled(enabled);
-    _pswd_ledit->setEnabled(enabled);
     _working_period_spbox->setEnabled(enabled);
     _login_pbut->setEnabled(enabled);
+}
+
+
+// ========================================================================== //
+// Set authorization widgets enabled.
+// ========================================================================== //
+void ASettingsDialog::setAuthWidgetsEnabled(bool enabled) {
+    _user_ledit->setEnabled(enabled);
+    _pswd_ledit->setEnabled(enabled);
 }
 
 
@@ -199,23 +207,26 @@ void ASettingsDialog::loadSettings() {
 // ========================================================================== //
 // On log in out started.
 // ========================================================================== //
-void ASettingsDialog::onLogInOutStarted() {setWidgetsEnabled(false);}
-
-
-// ========================================================================== //
-// On log in out succeed.
-// ========================================================================== //
-void ASettingsDialog::onLogInOutSucceed() {
-    setWidgetsEnabled(true);
-
-    switch(AServiceController::instance()->isAuthorized()) {
-        case true:  _login_pbut->setText(ASettingsDialog::tr("Logout")); break;
-        case false: _login_pbut->setText(ASettingsDialog::tr("Login")); break;
-    }
+void ASettingsDialog::onLogInOutStarted() {
+    setWidgetsEnabled(false); setAuthWidgetsEnabled(false);
 }
 
 
 // ========================================================================== //
-// On log in out failed.
+// On log in out finished.
 // ========================================================================== //
-void ASettingsDialog::onLogInOutFailed() {setWidgetsEnabled(true);}
+void ASettingsDialog::onLogInOutFinished() {
+    setWidgetsEnabled(true);
+
+    switch(AServiceController::instance()->isAuthorized()) {
+        case true:
+            _login_pbut->setText(ASettingsDialog::tr("Logout"));
+            setAuthWidgetsEnabled(false);
+        break;
+
+        case false:
+            _login_pbut->setText(ASettingsDialog::tr("Login"));
+            setAuthWidgetsEnabled(true);
+        break;
+    }
+}

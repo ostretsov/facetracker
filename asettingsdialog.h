@@ -37,6 +37,9 @@ class ASettingsDialog : public QDialog {
         //! Set widgets enabled.
         void setWidgetsEnabled(bool enabled);
 
+        //! Set authorization widgets enabled.
+        void setAuthWidgetsEnabled(bool enabled);
+
     private slots:
         //! Load settings.
         void loadSettings();
@@ -44,11 +47,8 @@ class ASettingsDialog : public QDialog {
         //! On log in out started.
         void onLogInOutStarted();
 
-        //! On log in out succeed.
-        void onLogInOutSucceed();
-
-        //! On log in out failed.
-        void onLogInOutFailed();
+        //! On log in out finished.
+        void onLogInOutFinished();
 
 };
 
