@@ -71,8 +71,8 @@ bool AStatisticSqlTableController::select() {
             QSqlQuery query(db);
             if(!query.exec(query_str)) {
                 QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "database")
-                    .warning() << qPrintable(ASqlTableController::tr(
-                        "Query: \"%1\"; error: \"%2\"")
+                    .warning() << qPrintable(
+                        QString("Query: \"%1\"; error: \"%2\"")
                         .arg(query_str).arg(query.lastError().text()));
 
                 return false;

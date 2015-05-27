@@ -74,9 +74,9 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
             break;
 
             case false:
-                ASettingsHelper::setValue(ASettingsDialog::tr("username")
+                ASettingsHelper::setValue(QStringLiteral("username")
                     , QVariant(_user_ledit->text()));
-                ASettingsHelper::setValue(ASettingsDialog::tr("password")
+                ASettingsHelper::setValue(QStringLiteral("password")
                     , QVariant(_pswd_ledit->text()));
 
                 QMetaObject::invokeMethod(AServiceController::instance()
@@ -163,7 +163,7 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
         , [this, lang_label, user_label, pswd_label
             , working_period_label, statistic_label](int idx) {
 
-        ASettingsHelper::setValue(ASettingsDialog::tr("locale")
+        ASettingsHelper::setValue(QStringLiteral("locale")
             , _lang_cbox->itemData(idx));
 
         AServiceController::instance()->installTranslator();
