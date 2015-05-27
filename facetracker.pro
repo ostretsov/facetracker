@@ -98,3 +98,6 @@ win32 {
 RESOURCES += \
     classifiers.qrc \
     images.qrc
+
+DISTFILES += \
+    facetracker_ru.ts
