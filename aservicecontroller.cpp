@@ -1,3 +1,4 @@
+#include <QtCore/QAbstractTableModel>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QGlobalStatic>
 #include <QtCore/QTranslator>
@@ -14,6 +15,7 @@
 
 #include "requests/alogoutftcomrequest.h"
 #include "requests/aloginftcomrequest.h"
+#include "requests/asyncftcomrequest.h"
 
 #include "systemtrayicon/asystemtrayicon.h"
 
@@ -246,6 +248,7 @@ void AServiceController::login() {
 
     const QString username
         = ASettingsHelper::value(QStringLiteral("username")).toString();
+
     const QString password
         = ASettingsHelper::value(QStringLiteral("password")).toString();
 
@@ -283,10 +286,18 @@ void AServiceController::login() {
 void AServiceController::logout() {
     emit logoutStarted();
 
+    const QString domain
+        = ASettingsHelper::value(QStringLiteral("domain")
+            , QVariant(QStringLiteral("face-tracker.com"))).toString();
+
+    const QString locale
+        = ASettingsHelper::value(QStringLiteral("locale")
+            , QVariant(QStringLiteral("en"))).toString();
+
     ALogoutFtcomRequest *request = new ALogoutFtcomRequest(this);
     request->setNam(_nam);
-    request->setDomain(QStringLiteral("face-tracker.com"));
-    request->setLocale(QStringLiteral("en"));
+    request->setDomain(domain);
+    request->setLocale(locale);
 
     connect(request, &ALogoutFtcomRequest::serverTime
         , [this](const qint64 &ts) {
@@ -306,6 +317,95 @@ void AServiceController::logout() {
     });
 
     request->send();
+}
+
+
+// ========================================================================== //
+// Sync.
+// ========================================================================== //
+void AServiceController::sync() {
+    emit syncStarted();
+
+    const QString domain
+        = ASettingsHelper::value(QStringLiteral("domain")
+            , QVariant(QStringLiteral("face-tracker.com"))).toString();
+
+    const QString locale
+        = ASettingsHelper::value(QStringLiteral("locale")
+            , QVariant(QStringLiteral("en"))).toString();
+
+    ASyncFtcomRequest *request = new ASyncFtcomRequest(this);
+    request->setNam(_nam);
+    request->setDomain(domain);
+    request->setLocale(locale);
+
+    connect(request, &ALogoutFtcomRequest::serverTime
+        , [this](const qint64 &ts) {
+        _session_ctrl->setRemoteDeltaTimeStamp(
+            QDateTime::currentMSecsSinceEpoch()-ts);
+    });
+
+    connect(request, &ALoginFtcomRequest::message
+        , [this](const QString &msg) {showMessage(msg);});
+
+    connect(request, &ALogoutFtcomRequest::succeed, [this,request]() {
+        emit syncSucceed(); request->deleteLater();
+    });
+
+    connect(request, &ALogoutFtcomRequest::failed, [this,request]() {
+        emit syncFailed(); request->deleteLater();
+    });
+
+    const int period_from_fidx
+        = statistic()->fieldIndex(QStringLiteral("period_from"));
+    const int period_to_fidx
+        = statistic()->fieldIndex(QStringLiteral("period_to"));
+    const int is_extra_time_fidx
+        = statistic()->fieldIndex(QStringLiteral("is_extra_time"));
+    const int is_synced_fidx
+        = statistic()->fieldIndex(QStringLiteral("is_synced"));
+
+    QAbstractItemModel *model = statistic()->model();
+    for(int row = 0, rows = model->rowCount(); row < rows; ++row) {
+        QModelIndex is_synced_index = model->index(row,is_synced_fidx);
+        if(is_synced_index.isValid()
+            && model->data(is_synced_index).toInt() == 0) {
+
+            QModelIndex period_from_index
+                = model->index(row,period_from_fidx);
+            if(!period_from_index.isValid()) continue;
+
+            QModelIndex period_to_index
+                = model->index(row,period_to_fidx);
+            if(!period_to_index.isValid()) continue;
+
+            QModelIndex is_extra_time_index
+                = model->index(row,is_extra_time_fidx);
+            if(!is_extra_time_index.isValid()) continue;
+
+            QHash<QString,QByteArray> hash;
+
+            hash.insert(QStringLiteral("period_from")
+                , QByteArray::number(model->data(period_from_index)
+                    .toLongLong()));
+
+            hash.insert(QStringLiteral("period_to")
+                , QByteArray::number(model->data(period_to_index)
+                    .toLongLong()));
+
+            if(model->data(is_extra_time_index).toInt() == 1)
+                hash.insert(QStringLiteral("is_extra_time"), "on");
+
+            model->setData(is_synced_index, 1);
+
+            request->appendDataItem(hash);
+        }
+    }
+
+    if(!request->data().isEmpty()) request->send();
+    else {emit syncSucceed(); request->deleteLater();}
+
+    QMetaObject::invokeMethod(statistic(), "submitAll", Qt::QueuedConnection);
 }
 
 

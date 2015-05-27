@@ -25,6 +25,10 @@ class AServiceController : public QObject {
         void logoutSucceed();
         void logoutFailed();
 
+        void syncStarted();
+        void syncSucceed();
+        void syncFailed();
+
         void trChanged();
 
     public:
@@ -61,6 +65,9 @@ class AServiceController : public QObject {
 
         //! Logout.
         void logout();
+
+        //! Sync.
+        void sync();
 
         //! Start.
         void start();

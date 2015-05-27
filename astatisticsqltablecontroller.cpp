@@ -107,6 +107,9 @@ bool AStatisticSqlTableController::select() {
         _model->setHeaderData(
             _model->fieldIndex(QStringLiteral("is_synced"))
             , Qt::Horizontal, AStatisticSqlTableController::tr("Is synced"));
+
+        _model->setSort(_model->fieldIndex(QStringLiteral("period_from"))
+            , Qt::DescendingOrder);
     }
 
     return _model->select();
