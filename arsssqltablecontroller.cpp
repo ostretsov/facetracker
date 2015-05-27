@@ -33,6 +33,7 @@ QList<QString> ARssSqlTableController::fieldNames() const {
     QList<QString> field_names;
     field_names
         << QStringLiteral("rss_id")
+        << QStringLiteral("datetime")
         << QStringLiteral("title")
         << QStringLiteral("body")
         << QStringLiteral("url");
@@ -59,6 +60,7 @@ bool ARssSqlTableController::select() {
             const QString query_str
                 = QLatin1String("CREATE TABLE IF NOT EXISTS rss(" \
                     "rss_id INTEGER PRIMARY KEY AUTOINCREMENT" \
+                    ", datetime INTEGER" \
                     ", title TEXT" \
                     ", body TEXT" \
                     ", url TEXT)");
@@ -83,6 +85,10 @@ bool ARssSqlTableController::select() {
             , Qt::Horizontal, ARssSqlTableController::tr("ID"));
 
         _model->setHeaderData(
+            _model->fieldIndex(QStringLiteral("datetime"))
+            , Qt::Horizontal, ARssSqlTableController::tr("Datetime"));
+
+        _model->setHeaderData(
             _model->fieldIndex(QStringLiteral("title"))
             , Qt::Horizontal, ARssSqlTableController::tr("Title"));
 
@@ -93,6 +99,9 @@ bool ARssSqlTableController::select() {
         _model->setHeaderData(
             _model->fieldIndex(QStringLiteral("url"))
             , Qt::Horizontal, ARssSqlTableController::tr("Url"));
+
+        _model->setSort(_model->fieldIndex(QStringLiteral("datetime"))
+            , Qt::DescendingOrder);
     }
 
     return _model->select();

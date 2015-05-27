@@ -18,6 +18,7 @@
 #include "requests/alogoutftcomrequest.h"
 #include "requests/aloginftcomrequest.h"
 #include "requests/asyncftcomrequest.h"
+#include "requests/arssftcomrequest.h"
 
 #include "systemtrayicon/asystemtrayicon.h"
 
@@ -155,7 +156,7 @@ AServiceController::AServiceController(QObject *parent)
     connect(_one_min_timer, SIGNAL(timeout()), this, SLOT(onOneMinTimeout()));
 
     QMetaObject::invokeMethod(this, "showSettingsDialog", Qt::QueuedConnection);
-    QMetaObject::invokeMethod(this, "version", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this, "checkVersion", Qt::QueuedConnection);
 }
 
 
@@ -420,9 +421,9 @@ void AServiceController::sync() {
 
 
 // ========================================================================== //
-// Version.
+// Check version.
 // ========================================================================== //
-void AServiceController::version() {
+void AServiceController::checkVersion() {
     emit versionStarted();
 
     const qint64 version_last_check
@@ -482,6 +483,85 @@ void AServiceController::version() {
 
     connect(request, &AVersionFtcomRequest::failed, [this,request]() {
         emit versionFailed(); request->deleteLater();
+    });
+
+    request->send();
+}
+
+
+// ========================================================================== //
+// Check rss.
+// ========================================================================== //
+void AServiceController::checkRss() {
+    emit rssStarted();
+
+    const qint64 rss_last_check
+         = ASettingsHelper::value(QStringLiteral("rss-last-check")
+            , QVariant(0)).toLongLong();
+
+    if(QDateTime::fromMSecsSinceEpoch(rss_last_check)
+        .daysTo(QDateTime::currentDateTime()) < 7) {
+
+        emit rssSucceed(); return;
+    }
+
+    const QString domain
+        = ASettingsHelper::value(QStringLiteral("domain")
+            , QVariant(QStringLiteral("face-tracker.com"))).toString();
+
+    const QString locale
+        = ASettingsHelper::value(QStringLiteral("locale")
+            , QVariant(QStringLiteral("en"))).toString();
+
+    ARssFtcomRequest *request = new ARssFtcomRequest(this);
+    request->setNam(_nam);
+    request->setDomain(domain);
+    request->setLocale(locale);
+
+    connect(request, &ARssFtcomRequest::succeed, [this,request]() {
+        qint64 ts = QDateTime::currentMSecsSinceEpoch();
+
+        ASettingsHelper::setValue(QStringLiteral("rss-last-check")
+            , QVariant(ts));
+
+        const QList<QHash<QString,QString> > &list = request->list();
+        if(list.isEmpty()) {emit rssSucceed(); request->deleteLater(); return;}
+
+        const int url_fidx = rss()->fieldIndex(QStringLiteral("url"));
+
+        QAbstractItemModel *model = rss()->model();
+
+        QListIterator<QHash<QString,QString> > iter(list);
+        while(iter.hasNext()) {
+            const QHash<QString,QString> &hash = iter.next();
+            if(!hash.contains(QStringLiteral("url"))) continue;
+
+            QModelIndexList indexes
+                = model->match(model->index(0,url_fidx), Qt::DisplayRole
+                    , hash.value(QStringLiteral("url"))
+                    , 1, Qt::MatchFixedString);
+
+            if(!indexes.isEmpty()) continue;
+
+            QVariantHash hash2;
+            hash2.insert(QStringLiteral("datetime"), ts+1);
+            hash2.insert(QStringLiteral("title")
+                , hash.value(QStringLiteral("title")));
+            hash2.insert(QStringLiteral("body")
+                , hash.value(QStringLiteral("body")));
+            hash2.insert(QStringLiteral("url")
+                , hash.value(QStringLiteral("url")));
+
+            rss()->appendRow(hash2);
+        }
+
+        QMetaObject::invokeMethod(rss(), "submitAll", Qt::QueuedConnection);
+
+        emit rssSucceed(); request->deleteLater();
+    });
+
+    connect(request, &ARssFtcomRequest::failed, [this,request]() {
+        emit rssFailed(); request->deleteLater();
     });
 
     request->send();
