@@ -1,3 +1,4 @@
+#include <QtCore/QLoggingCategory>
 #include <QtCore/QTranslator>
 #include <QtCore/QTextCodec>
 #include <QtCore/QLocale>
@@ -49,6 +50,9 @@ int main(int argc, char *argv[]) {
 
     QLocale::setDefault(QLocale(QLocale::Russian,QLocale::RussianFederation));
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+
+    QLoggingCategory::setFilterRules(
+        QStringLiteral("qt.network.ssl.warning=false"));
 
     const QString locale_name = QLocale::system().name();
 
