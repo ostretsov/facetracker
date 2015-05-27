@@ -161,7 +161,6 @@ void ASessionController::exportDetectionPeriods() {
 
     QVariantHash hash;
     hash.insert(QStringLiteral("username"), QStringLiteral("unknown"));
-    hash.insert(QStringLiteral("session_id"), QStringLiteral("unknown"));
     hash.insert(QStringLiteral("period_from")
         , period.first().first+_remote_delta_ts);
 

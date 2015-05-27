@@ -35,7 +35,6 @@ QList<QString> AStatisticSqlTableController::fieldNames() const {
     field_names
         << QStringLiteral("statistic_id")
         << QStringLiteral("username")
-        << QStringLiteral("session_id")
         << QStringLiteral("period_from")
         << QStringLiteral("period_to")
         << QStringLiteral("is_extra_time")
@@ -64,7 +63,6 @@ bool AStatisticSqlTableController::select() {
                 = QLatin1String("CREATE TABLE IF NOT EXISTS statistic(" \
                     "statistic_id INTEGER PRIMARY KEY AUTOINCREMENT" \
                     ", username TEXT" \
-                    ", session_id TEXT" \
                     ", period_from INTEGER" \
                     ", period_to INTEGER" \
                     ", is_extra_time INTEGER" \
@@ -92,10 +90,6 @@ bool AStatisticSqlTableController::select() {
         _model->setHeaderData(
             _model->fieldIndex(QStringLiteral("username"))
             , Qt::Horizontal, AStatisticSqlTableController::tr("Username"));
-
-        _model->setHeaderData(
-            _model->fieldIndex(QStringLiteral("session_id"))
-            , Qt::Horizontal, AStatisticSqlTableController::tr("Session ID"));
 
         _model->setHeaderData(
             _model->fieldIndex(QStringLiteral("period_from"))
