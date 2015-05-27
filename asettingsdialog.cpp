@@ -57,12 +57,15 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     _working_period_spbox->setValue(
         ASettingsHelper::value(QStringLiteral("working-period"), 30).toInt());
 
+    const QString registration_link
+        = ASettingsHelper::value(QStringLiteral("registration-link"))
+            .toString();
+
     _register_label = new QLabel(this);
     _register_label->setOpenExternalLinks(true);
     _register_label->setText(
         QString("<a href=\"%1\">%2</a>")
-            .arg(ASettingsHelper::value(QStringLiteral("registration-link"))
-                .toString())
+            .arg(registration_link)
             .arg(ASettingsDialog::tr("Register")));
 
     _login_pbut = new QPushButton(this);
@@ -85,11 +88,15 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
         }
     });
 
+    const QString statistic_link
+        = ASettingsHelper::value(QStringLiteral("statistic-link"))
+            .toString();
+
     QLabel *statistic_label = new QLabel(this);
     statistic_label->setOpenExternalLinks(true);
     statistic_label->setText(
         ASettingsDialog::tr("Statistic available" \
-        " <a href=\"http://google.ru\">at link</a>."));
+        " <a href=\"%1\">at link</a>.").arg(statistic_link));
 
     AImageWidget *img_wdg = new AImageWidget(this);
     connect(_capture, SIGNAL(captured(const QImage&))
@@ -99,7 +106,6 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
 
     QLabel *rss_label = new QLabel(this);
     rss_label->setOpenExternalLinks(true);
-    rss_label->setText("RSS...");
 
     QGridLayout *layout = new QGridLayout();
     layout->addWidget(lang_label, 0, 0, 1, 1);
@@ -177,10 +183,13 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
             ASettingsDialog::tr("No more in front\nof webcamera:"));
         _working_period_spbox->setSuffix(ASettingsDialog::tr(" min."));
 
+        const QString registration_link
+            = ASettingsHelper::value(QStringLiteral("registration-link"))
+                .toString();
+
         _register_label->setText(
             QString("<a href=\"%1\">%2</a>")
-                .arg(ASettingsHelper::value(QStringLiteral("registration-link"))
-                    .toString())
+                .arg(registration_link)
                 .arg(ASettingsDialog::tr("Register")));
 
         switch(AServiceController::instance()->isAuthorized()) {
@@ -193,9 +202,13 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
             break;
         }
 
+        const QString statistic_link
+            = ASettingsHelper::value(QStringLiteral("statistic-link"))
+                .toString();
+
         statistic_label->setText(
             ASettingsDialog::tr("Statistic available" \
-                " <a href=\"http://google.ru\">at link</a>."));
+            " <a href=\"%1\">at link</a>.").arg(statistic_link));
     });
 }
 
