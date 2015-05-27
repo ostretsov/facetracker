@@ -31,7 +31,8 @@ SOURCES += main.cpp \
     requests/aftcomrequest.cpp \
     requests/aloginftcomrequest.cpp \
     requests/alogoutftcomrequest.cpp \
-    requests/asyncftcomrequest.cpp
+    requests/asyncftcomrequest.cpp \
+    requests/aversionftcomrequest.cpp
 
 HEADERS += \
     helpers/asettingshelper.h \
@@ -56,7 +57,8 @@ HEADERS += \
     requests/aftcomrequest.h \
     requests/aloginftcomrequest.h \
     requests/alogoutftcomrequest.h \
-    requests/asyncftcomrequest.h
+    requests/asyncftcomrequest.h \
+    requests/aversionftcomrequest.h
 
 unix {
     INCLUDEPATH += /usr/include/libappindicator-0.1 \
