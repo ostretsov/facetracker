@@ -16,7 +16,7 @@
 // Constructor.
 // ========================================================================== //
 ASessionController::ASessionController(QObject *parent)
-    : QObject(parent), _remote_delta_ts(0), _working_period(/*30*60000*/20000) {
+    : QObject(parent), _remote_delta_ts(0), _working_period(30*60000) {
 
     _face_ctrl = new AFaceController(this);
     connect(_face_ctrl, SIGNAL(faceIn()), this, SLOT(onFaceIn()));
@@ -24,7 +24,7 @@ ASessionController::ASessionController(QObject *parent)
 
     _timer = new QTimer(this);
     _timer->setSingleShot(true);
-    _timer->setInterval(/*60000*/2000);
+    _timer->setInterval(60000);
     connect(_timer, SIGNAL(timeout()), _face_ctrl, SLOT(start()));
 
     _machine = new QStateMachine(this);

@@ -425,6 +425,17 @@ void AServiceController::start() {
 
     sync();
 
+    const qint64 working_period
+         = ASettingsHelper::value(QStringLiteral("working-period")
+            , QVariant(30)).toLongLong();
+
+    const int web_cam_request_freq
+         = ASettingsHelper::value(QStringLiteral("web-cam-request-freq")
+            , QVariant(60)).toInt();
+
+    _session_ctrl->setWorkingPeriod(working_period * 60000);
+    _session_ctrl->setWebcamRequestFreq(web_cam_request_freq*1000);
+
     if(!_session_ctrl->isRunning())
         _session_ctrl->start();
 
