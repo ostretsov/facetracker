@@ -1,6 +1,8 @@
 #include <QtCore/QAbstractTableModel>
 
+#include <QtWidgets/QScrollArea>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSplitter>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QSpinBox>
@@ -103,7 +105,7 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
         " <a href=\"%1\">at link</a>.").arg(statistic_link));
 
     AImageWidget *img_wdg = new AImageWidget(this);
-    img_wdg->setMinimumSize(320,240);
+    img_wdg->setMinimumSize(160,120);
     connect(_capture, SIGNAL(captured(const QImage&))
         , img_wdg, SLOT(updateImage(const QImage&)));
     connect(_capture, SIGNAL(detected(const QRect&))
@@ -114,6 +116,16 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     _rss_label->setOpenExternalLinks(true);
     QMetaObject::invokeMethod(AServiceController::instance()
         , "checkRss", Qt::QueuedConnection);
+
+    QScrollArea *rss_area = new QScrollArea(this);
+    rss_area->setWidgetResizable(true);
+    rss_area->setWidget(_rss_label);
+
+    QSplitter *splitter = new QSplitter(this);
+    splitter->setChildrenCollapsible(false);
+    splitter->setOrientation(Qt::Vertical);
+    splitter->addWidget(img_wdg);
+    splitter->addWidget(rss_area);
 
     QGridLayout *layout = new QGridLayout();
     layout->addWidget(lang_label, 0, 0, 1, 1);
@@ -127,8 +139,7 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     layout->addWidget(_register_label, 1, 3, 1, 1);
     layout->addWidget(_login_pbut, 2, 3, 1, 1);
     layout->addWidget(statistic_label, 4, 1, 1, 2);
-    layout->addWidget(img_wdg, 5, 0, 1, 4);
-    layout->addWidget(_rss_label, 6, 0, 1, 4);
+    layout->addWidget(splitter, 5, 0, 1, 4);
     layout->setColumnStretch(2,2);
 
     setLayout(layout);
