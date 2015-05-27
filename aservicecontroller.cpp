@@ -128,7 +128,8 @@ AServiceController::AServiceController(QObject *parent)
     , _sync_interval_counter(0)
     , _service_db_ctrl(new AServiceDatabaseController(this))
     , _session_ctrl(new ASessionController(this))
-    , _nam(new QNetworkAccessManager(this)), _one_min_timer(new QTimer(this))
+    , _nam(new QNetworkAccessManager(this))
+    , _one_min_timer(new QTimer(this))
     , _qt_tr(NULL), _app_tr(NULL) {
 
     //qInstallMessageHandler(handleMessage);
@@ -426,6 +427,8 @@ void AServiceController::start() {
 
     if(!_session_ctrl->isRunning())
         _session_ctrl->start();
+
+    _sync_interval_counter = 0;
 
     _one_min_timer->start();
 }

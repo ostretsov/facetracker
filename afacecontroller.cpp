@@ -106,7 +106,7 @@ void AFaceController::start() {_machine->start();}
 // Stop.
 // ========================================================================== //
 void AFaceController::stop() {
-    _timer->stop(); _machine->stop(); stopCapturing();
+    stopCapturing(); _timer->stop(); _machine->stop();
 }
 
 

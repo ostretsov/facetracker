@@ -109,6 +109,10 @@ void ASessionController::stop() {
 
     if(_face_ctrl->isRunning())
         _face_ctrl->stop();
+
+    _detections.clear();
+
+    emit grayActivated();
 }
 
 
