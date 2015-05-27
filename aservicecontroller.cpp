@@ -528,8 +528,8 @@ void AServiceController::shutdown() {
 void AServiceController::onOneMinTimeout() {
     ++_sync_interval_counter;
 
-    if(ASettingsHelper::value(QStringLiteral("sync-freq"), QVariant(0)).toInt()
-        >= _sync_interval_counter) {sync(); _sync_interval_counter = 0;}
+    if(ASettingsHelper::value(QStringLiteral("sync-freq"), QVariant(30)).toInt()
+        <= _sync_interval_counter) {sync(); _sync_interval_counter = 0;}
 }
 
 
