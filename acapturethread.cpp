@@ -154,6 +154,11 @@ void ACaptureThread::run() {
         cv::Mat src_mat;
         capture >> src_mat;
         if(src_mat.empty()) {
+            QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "app").warning()
+                << qPrintable(ACaptureThread::tr(
+                    "Capturing with device %1 failed!")
+                    .arg(dev_idx));
+
             QMetaObject::invokeMethod(this, "failed", Qt::QueuedConnection);
 
             break;
