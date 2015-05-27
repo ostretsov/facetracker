@@ -556,8 +556,9 @@ void AServiceController::checkRss() {
         }
 
         QMetaObject::invokeMethod(rss(), "submitAll", Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, "rssSucceed", Qt::QueuedConnection);
 
-        emit rssSucceed(); request->deleteLater();
+        request->deleteLater();
     });
 
     connect(request, &ARssFtcomRequest::failed, [this,request]() {

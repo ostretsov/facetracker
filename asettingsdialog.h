@@ -34,6 +34,8 @@ class ASettingsDialog : public QDialog {
 
         QPushButton *_login_pbut;
 
+        QLabel *_rss_label;
+
         //! Set widgets enabled.
         void setWidgetsEnabled(bool enabled);
 
@@ -46,6 +48,9 @@ class ASettingsDialog : public QDialog {
 
         //! On log in out finished.
         void onLogInOutFinished();
+
+        //! On rss succeed.
+        void onRssSucceed();
 
 };
 

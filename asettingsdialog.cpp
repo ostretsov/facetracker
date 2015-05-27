@@ -1,9 +1,13 @@
+#include <QtCore/QAbstractTableModel>
+
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QLayout>
 #include <QtWidgets/QLabel>
+
+#include "database/atablecontroller.h"
 
 #include "widgets/aimagewidget.h"
 
@@ -99,13 +103,17 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
         " <a href=\"%1\">at link</a>.").arg(statistic_link));
 
     AImageWidget *img_wdg = new AImageWidget(this);
+    img_wdg->setMinimumSize(320,240);
     connect(_capture, SIGNAL(captured(const QImage&))
         , img_wdg, SLOT(updateImage(const QImage&)));
     connect(_capture, SIGNAL(detected(const QRect&))
         , img_wdg, SLOT(updateRoi(const QRect&)));
 
-    QLabel *rss_label = new QLabel(this);
-    rss_label->setOpenExternalLinks(true);
+    _rss_label = new QLabel(this);
+    _rss_label->setWordWrap(true);
+    _rss_label->setOpenExternalLinks(true);
+    QMetaObject::invokeMethod(AServiceController::instance()
+        , "checkRss", Qt::QueuedConnection);
 
     QGridLayout *layout = new QGridLayout();
     layout->addWidget(lang_label, 0, 0, 1, 1);
@@ -120,7 +128,7 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     layout->addWidget(_login_pbut, 2, 3, 1, 1);
     layout->addWidget(statistic_label, 4, 1, 1, 2);
     layout->addWidget(img_wdg, 5, 0, 1, 4);
-    layout->addWidget(rss_label, 6, 0, 1, 4);
+    layout->addWidget(_rss_label, 6, 0, 1, 4);
     layout->setColumnStretch(2,2);
 
     setLayout(layout);
@@ -138,6 +146,9 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
         , this, &ASettingsDialog::onLogInOutFinished);
     connect(AServiceController::instance(), &AServiceController::logoutFailed
         , this, &ASettingsDialog::onLogInOutFinished);
+
+    connect(AServiceController::instance(), &AServiceController::rssSucceed
+        , this, &ASettingsDialog::onRssSucceed);
 
     const QString username
         = ASettingsHelper::value(QStringLiteral("username")).toString();
@@ -209,6 +220,14 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
         statistic_label->setText(
             ASettingsDialog::tr("Statistic available" \
             " <a href=\"%1\">at link</a>.").arg(statistic_link));
+
+        AServiceController::instance()->rss()->clearAll();
+
+        ASettingsHelper::setValue(QStringLiteral("rss-last-check")
+            , QVariant(0));
+
+        QMetaObject::invokeMethod(AServiceController::instance()
+            , "checkRss", Qt::QueuedConnection);
     });
 }
 
@@ -268,4 +287,33 @@ void ASettingsDialog::onLogInOutFinished() {
             setAuthWidgetsEnabled(true);
         break;
     }
+}
+
+
+// ========================================================================== //
+// On rss succeed.
+// ========================================================================== //
+void ASettingsDialog::onRssSucceed() {
+    QAbstractItemModel *model = AServiceController::instance()->rss()->model();
+    if(model->rowCount() == 0) return;
+
+    const int title_fidx
+        = AServiceController::instance()->rss()
+            ->fieldIndex(QStringLiteral("title"));
+    const int body_fidx
+        = AServiceController::instance()->rss()
+            ->fieldIndex(QStringLiteral("body"));
+    const int url_fidx
+        = AServiceController::instance()->rss()
+            ->fieldIndex(QStringLiteral("url"));
+
+    const QString title = model->data(model->index(0,title_fidx)).toString();
+    const QString body  = model->data(model->index(0,body_fidx)).toString();
+    const QString url   = model->data(model->index(0,url_fidx)).toString();
+
+    const QString text
+        = QString("<h3><a href=\"%1\">%2</a></h3>%3")
+            .arg(url).arg(title).arg(body);
+
+    _rss_label->setText(text);
 }
