@@ -3,6 +3,7 @@
 #include <QtCore/QGlobalStatic>
 #include <QtCore/QTranslator>
 #include <QtCore/QDateTime>
+#include <QtCore/QTimer>
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtCore/QDir>
@@ -124,9 +125,11 @@ AServiceController *AServiceController::instance() {return _g_service_ctrl;}
 // ========================================================================== //
 AServiceController::AServiceController(QObject *parent)
     : QObject(parent), _mode(MODE_GRAY), _authorized(false)
+    , _sync_interval_counter(0)
     , _service_db_ctrl(new AServiceDatabaseController(this))
     , _session_ctrl(new ASessionController(this))
-    , _nam(new QNetworkAccessManager(this)), _qt_tr(NULL), _app_tr(NULL) {
+    , _nam(new QNetworkAccessManager(this)), _one_min_timer(new QTimer(this))
+    , _qt_tr(NULL), _app_tr(NULL) {
 
     //qInstallMessageHandler(handleMessage);
 
@@ -144,6 +147,10 @@ AServiceController::AServiceController(QObject *parent)
         , this, SLOT(onGreenActivated()));
     connect(_session_ctrl, SIGNAL(redActivated())
         , this, SLOT(onRedActivated()));
+
+    _one_min_timer->setSingleShot(false);
+    _one_min_timer->setInterval(60000);
+    connect(_one_min_timer, SIGNAL(timeout()), this, SLOT(onOneMinTimeout()));
 
     QMetaObject::invokeMethod(this, "showSettingsDialog", Qt::QueuedConnection);
 }
@@ -413,8 +420,14 @@ void AServiceController::sync() {
 // Start.
 // ========================================================================== //
 void AServiceController::start() {
-    if(_authorized && !_session_ctrl->isRunning())
+    if(!_authorized) return;
+
+    sync();
+
+    if(!_session_ctrl->isRunning())
         _session_ctrl->start();
+
+    _one_min_timer->start();
 }
 
 
@@ -422,6 +435,8 @@ void AServiceController::start() {
 // Stop.
 // ========================================================================== //
 void AServiceController::stop() {
+    _one_min_timer->stop();
+
     if(_session_ctrl->isRunning())
         _session_ctrl->stop();
 }
@@ -504,6 +519,17 @@ void AServiceController::shutdown() {
 
     if(_service_db_ctrl->isOpened())
         _service_db_ctrl->closeConnection();
+}
+
+
+// ========================================================================== //
+// On one minute timeout.
+// ========================================================================== //
+void AServiceController::onOneMinTimeout() {
+    ++_sync_interval_counter;
+
+    if(ASettingsHelper::value(QStringLiteral("sync-freq"), QVariant(0)).toInt()
+        >= _sync_interval_counter) {sync(); _sync_interval_counter = 0;}
 }
 
 

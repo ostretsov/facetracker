@@ -7,6 +7,7 @@
 class QNetworkAccessManager;
 class QTranslator;
 class QAction;
+class QTimer;
 
 class AServiceDatabaseController;
 class ASessionController;
@@ -89,6 +90,8 @@ class AServiceController : public QObject {
 
         bool _authorized;
 
+        int _sync_interval_counter;
+
         AServiceDatabaseController *_service_db_ctrl;
 
         ASessionController *_session_ctrl;
@@ -98,6 +101,8 @@ class AServiceController : public QObject {
         QPointer<ASystemTrayIcon> _tray;
 
         QAction *_settings_action, *_quit_action;
+
+        QTimer *_one_min_timer;
 
         QTranslator *_qt_tr, *_app_tr;
 
@@ -116,6 +121,9 @@ class AServiceController : public QObject {
 
         //! Shutdown.
         void shutdown();
+
+        //! On one minute timeout.
+        void onOneMinTimeout();
 
         //! On gray activated.
         void onGrayActivated();
