@@ -90,7 +90,7 @@ void ARequest::onReplyReadyRead() {
     switch(onReplyDataReady(http_code,data)) {
         case true:
             QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "network").debug()
-                << qPrintable(ARequest::tr("Request \"%1\" succeed!")
+                << qPrintable(ARequest::tr("Request \"%1\" succeed.")
                     .arg(requestName()));
 
             emit succeed();
