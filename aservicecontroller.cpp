@@ -53,7 +53,8 @@ QChar messageTypeToChar(QtMsgType type) {
 void handleMessage(QtMsgType type, const QMessageLogContext &ctx
     , const QString &msg) {
 
-    if(QLatin1String(ctx.category) == QLatin1String("app"))
+    if(QLatin1String(ctx.category) == QLatin1String("video")
+        || QLatin1String(ctx.category) == QLatin1String("network"))
         AServiceController::instance()->showMessage(msg);
 
     if(AServiceController::instance()->isDatabaseOpened()) {

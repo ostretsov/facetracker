@@ -33,6 +33,9 @@ class ARequest : public QObject {
         //! Set NAM.
         void setNam(QNetworkAccessManager *nam);
 
+        //! Get request name.
+        virtual QString requestName() const;
+
     public slots:
         //! GET.
         void get(const QUrl &url);

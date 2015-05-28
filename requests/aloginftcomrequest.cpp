@@ -29,6 +29,14 @@ QString ALoginFtcomRequest::password() const {return _pswd;}
 
 
 // ========================================================================== //
+// Get request name.
+// ========================================================================== //
+QString ALoginFtcomRequest::requestName() const {
+    return QStringLiteral("LoginFtcomRequest");
+}
+
+
+// ========================================================================== //
 // Set username.
 // ========================================================================== //
 void ALoginFtcomRequest::setUsername(const QString &user) {_user = user;}

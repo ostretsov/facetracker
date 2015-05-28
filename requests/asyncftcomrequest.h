@@ -26,6 +26,9 @@ class ASyncFtcomRequest : public AFtcomRequest {
         //! Append data item.
         void appendDataItem(const QHash<QString,QByteArray> &hash);
 
+        //! Get request name.
+        virtual QString requestName() const;
+
     public slots:
         //! Send.
         virtual void send();

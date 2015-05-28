@@ -1,3 +1,5 @@
+#include <QtCore/QDebug>
+
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QHttpMultiPart>
@@ -28,6 +30,12 @@ QNetworkAccessManager *ARequest::nam() const {return _nam;}
 // Set NAM.
 // ========================================================================== //
 void ARequest::setNam(QNetworkAccessManager *nam) {_nam = nam;}
+
+
+// ========================================================================== //
+// Get request name.
+// ========================================================================== //
+QString ARequest::requestName() const {return QStringLiteral("Request");}
 
 
 // ========================================================================== //
@@ -80,8 +88,21 @@ void ARequest::onReplyReadyRead() {
 
     QByteArray data = reply->readAll();
     switch(onReplyDataReady(http_code,data)) {
-        case true:  emit succeed(); break;
-        case false: emit failed();  break;
+        case true:
+            QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "network").debug()
+                << qPrintable(ARequest::tr("Request \"%1\" succeed!")
+                    .arg(requestName()));
+
+            emit succeed();
+        break;
+
+        case false:
+            QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "network").warning()
+                << qPrintable(ARequest::tr("Request \"%1\" failed (HTTP %2)!")
+                    .arg(requestName()).arg(http_code));
+
+            emit failed();
+        break;
     }
 
     reply->deleteLater();

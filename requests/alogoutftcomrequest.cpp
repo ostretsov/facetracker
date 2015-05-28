@@ -17,6 +17,14 @@ ALogoutFtcomRequest::ALogoutFtcomRequest(QNetworkAccessManager *nam
 
 
 // ========================================================================== //
+// Get request name.
+// ========================================================================== //
+QString ALogoutFtcomRequest::requestName() const {
+    return QStringLiteral("LogoutFtcomRequest");
+}
+
+
+// ========================================================================== //
 // Send.
 // ========================================================================== //
 void ALogoutFtcomRequest::send() {

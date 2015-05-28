@@ -17,6 +17,9 @@ class ALogoutFtcomRequest : public AFtcomRequest {
         //! Destructor.
         virtual ~ALogoutFtcomRequest() {}
 
+        //! Get request name.
+        virtual QString requestName() const;
+
     public slots:
         //! Send.
         virtual void send();

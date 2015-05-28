@@ -26,6 +26,14 @@ const QList<QHash<QString,QString> > &ARssFtcomRequest::list() const {
 
 
 // ========================================================================== //
+// Get request name.
+// ========================================================================== //
+QString ARssFtcomRequest::requestName() const {
+    return QStringLiteral("RssFtcomRequest");
+}
+
+
+// ========================================================================== //
 // Send.
 // ========================================================================== //
 void ARssFtcomRequest::send() {

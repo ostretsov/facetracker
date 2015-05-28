@@ -26,6 +26,9 @@ class AFtcomRequest : public ARequest {
         //! Get locale.
         QString locale() const;
 
+        //! Get request name.
+        virtual QString requestName() const;
+
     public slots:
         //! Set domain.
         void setDomain(const QString &domain);

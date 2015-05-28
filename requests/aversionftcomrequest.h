@@ -20,6 +20,9 @@ class AVersionFtcomRequest : public AFtcomRequest {
         //! Destructor.
         virtual ~AVersionFtcomRequest() {}
 
+        //! Get request name.
+        virtual QString requestName() const;
+
     public slots:
         //! Send.
         virtual void send();

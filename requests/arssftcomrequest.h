@@ -20,6 +20,9 @@ class ARssFtcomRequest : public AFtcomRequest {
         //! Get rss list.
         const QList<QHash<QString,QString> > &list() const;
 
+        //! Get request name.
+        virtual QString requestName() const;
+
     public slots:
         //! Send.
         virtual void send();

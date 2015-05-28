@@ -40,6 +40,14 @@ void ASyncFtcomRequest::appendDataItem(const QHash<QString,QByteArray> &hash) {
 
 
 // ========================================================================== //
+// Get request name.
+// ========================================================================== //
+QString ASyncFtcomRequest::requestName() const {
+    return QStringLiteral("SyncFtcomRequest");
+}
+
+
+// ========================================================================== //
 // Send.
 // ========================================================================== //
 void ASyncFtcomRequest::send() {

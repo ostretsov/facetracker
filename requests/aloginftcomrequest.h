@@ -23,6 +23,9 @@ class ALoginFtcomRequest : public AFtcomRequest {
         //! Get password.
         QString password() const;
 
+        //! Get request name.
+        virtual QString requestName() const;
+
     public slots:
         //! Set username.
         void setUsername(const QString &user);

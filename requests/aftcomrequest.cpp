@@ -29,6 +29,14 @@ QString AFtcomRequest::locale() const {return _locale;}
 
 
 // ========================================================================== //
+// Get request name.
+// ========================================================================== //
+QString AFtcomRequest::requestName() const {
+    return QStringLiteral("FtcomRequest");
+}
+
+
+// ========================================================================== //
 // Set domain.
 // ========================================================================== //
 void AFtcomRequest::setDomain(const QString &domain) {_domain = domain;}

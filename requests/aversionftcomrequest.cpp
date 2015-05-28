@@ -19,6 +19,14 @@ AVersionFtcomRequest::AVersionFtcomRequest(QNetworkAccessManager *nam
 
 
 // ========================================================================== //
+// Get request name.
+// ========================================================================== //
+QString AVersionFtcomRequest::requestName() const {
+    return QStringLiteral("VersionFtcomRequest");
+}
+
+
+// ========================================================================== //
 // Send.
 // ========================================================================== //
 void AVersionFtcomRequest::send() {
