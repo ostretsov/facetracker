@@ -25,7 +25,7 @@ AFaceController::AFaceController(QObject *parent) : QObject(parent) {
 
     _timer = new QTimer(this);
     _timer->setSingleShot(true);
-    _timer->setInterval(10000);
+    _timer->setInterval(5000);
 
     _machine = new QStateMachine(this);
     connect(_machine, SIGNAL(started()), this, SIGNAL(started()));
