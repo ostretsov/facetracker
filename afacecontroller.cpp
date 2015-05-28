@@ -2,6 +2,8 @@
 #include <QtCore/QFinalState>
 #include <QtCore/QTimer>
 
+#include "helpers/asettingshelper.h"
+
 #include "afacecontroller.h"
 #include "afacecapturethread.h"
 
@@ -9,7 +11,17 @@
 // Constructor.
 // ========================================================================== //
 AFaceController::AFaceController(QObject *parent) : QObject(parent) {
+    const int obj_min_size
+        = ASettingsHelper::value(QStringLiteral("object-min-size")
+            , QVariant(20)).toInt();
+
+    const int obj_max_size
+        = ASettingsHelper::value(QStringLiteral("object-max-size")
+            , QVariant(50)).toInt();
+
     _capture = new AFaceCaptureThread(this);
+    _capture->setDetectorMinSize(obj_min_size);
+    _capture->setDetectorMaxSize(obj_max_size);
 
     _timer = new QTimer(this);
     _timer->setSingleShot(true);
