@@ -64,6 +64,19 @@
     </message>
 </context>
 <context>
+    <name>ARequest</name>
+    <message>
+        <location filename="requests/arequest.cpp" line="93"/>
+        <source>Request &quot;%1&quot; succeed.</source>
+        <translation>Запрос &quot;%1&quot; завершён успешно.</translation>
+    </message>
+    <message>
+        <location filename="requests/arequest.cpp" line="101"/>
+        <source>Request &quot;%1&quot; failed (HTTP %2)!</source>
+        <translation>Запрос &quot;%1&quot; завершился с ошибкой (HTTP %2)!</translation>
+    </message>
+</context>
+<context>
     <name>ARssSqlTableController</name>
     <message>
         <location filename="arsssqltablecontroller.cpp" line="85"/>
@@ -119,52 +132,70 @@
 <context>
     <name>ASettingsDialog</name>
     <message>
-        <location filename="asettingsdialog.cpp" line="28"/>
-        <location filename="asettingsdialog.cpp" line="199"/>
+        <location filename="asettingsdialog.cpp" line="30"/>
+        <location filename="asettingsdialog.cpp" line="225"/>
         <source>Settings</source>
         <translation>Параметры</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="34"/>
-        <location filename="asettingsdialog.cpp" line="200"/>
+        <location filename="asettingsdialog.cpp" line="42"/>
+        <location filename="asettingsdialog.cpp" line="228"/>
+        <source>minimum: </source>
+        <translation>минимум: </translation>
+    </message>
+    <message>
+        <location filename="asettingsdialog.cpp" line="46"/>
+        <location filename="asettingsdialog.cpp" line="229"/>
+        <source>maximum: </source>
+        <translation>максимум: </translation>
+    </message>
+    <message>
+        <location filename="asettingsdialog.cpp" line="50"/>
+        <location filename="asettingsdialog.cpp" line="227"/>
+        <source>Object size:</source>
+        <translation>Размер объекта:</translation>
+    </message>
+    <message>
+        <location filename="asettingsdialog.cpp" line="64"/>
+        <location filename="asettingsdialog.cpp" line="231"/>
         <source>Language:</source>
         <translation>Интерфейс:</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="46"/>
-        <location filename="asettingsdialog.cpp" line="201"/>
+        <location filename="asettingsdialog.cpp" line="77"/>
+        <location filename="asettingsdialog.cpp" line="232"/>
         <source>Username:</source>
         <translation>Логин:</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="51"/>
-        <location filename="asettingsdialog.cpp" line="202"/>
+        <location filename="asettingsdialog.cpp" line="83"/>
+        <location filename="asettingsdialog.cpp" line="233"/>
         <source>Password:</source>
         <translation>Пароль:</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="58"/>
-        <location filename="asettingsdialog.cpp" line="205"/>
+        <location filename="asettingsdialog.cpp" line="91"/>
+        <location filename="asettingsdialog.cpp" line="236"/>
         <source>No more in front
 of webcamera:</source>
         <translation>Перед веб-камерой
 не более:</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="61"/>
-        <location filename="asettingsdialog.cpp" line="206"/>
+        <location filename="asettingsdialog.cpp" line="94"/>
+        <location filename="asettingsdialog.cpp" line="237"/>
         <source> min.</source>
         <translation> мин.</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="75"/>
-        <location filename="asettingsdialog.cpp" line="215"/>
+        <location filename="asettingsdialog.cpp" line="108"/>
+        <location filename="asettingsdialog.cpp" line="246"/>
         <source>Register</source>
         <translation>Регистрация</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="104"/>
-        <location filename="asettingsdialog.cpp" line="232"/>
+        <location filename="asettingsdialog.cpp" line="137"/>
+        <location filename="asettingsdialog.cpp" line="263"/>
         <source>Statistic available &lt;a href=&quot;%1&quot;&gt;at link&lt;/a&gt;.</source>
         <translation>Статистика доступна &lt;a href=&quot;%1&quot;&gt;по ссылке&lt;/a&gt;.</translation>
     </message>
@@ -173,16 +204,16 @@ of webcamera:</source>
         <translation type="vanished">Статистика доступна &lt;a href=&quot;http://google.ru&quot;&gt;по ссылке&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="174"/>
-        <location filename="asettingsdialog.cpp" line="219"/>
-        <location filename="asettingsdialog.cpp" line="292"/>
+        <location filename="asettingsdialog.cpp" line="199"/>
+        <location filename="asettingsdialog.cpp" line="250"/>
+        <location filename="asettingsdialog.cpp" line="323"/>
         <source>Logout</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="179"/>
-        <location filename="asettingsdialog.cpp" line="223"/>
-        <location filename="asettingsdialog.cpp" line="297"/>
+        <location filename="asettingsdialog.cpp" line="204"/>
+        <location filename="asettingsdialog.cpp" line="254"/>
+        <location filename="asettingsdialog.cpp" line="328"/>
         <source>Login</source>
         <translation>Авторизация</translation>
     </message>
