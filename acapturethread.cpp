@@ -109,7 +109,7 @@ void ACaptureThread::run() {
 
     cv::VideoCapture capture(dev_idx);
     if(!capture.isOpened()) {
-        QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "app").warning()
+        QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "video").warning()
             << qPrintable(ACaptureThread::tr("Capturing with device %1 failed!")
                 .arg(dev_idx));
 
@@ -124,7 +124,7 @@ void ACaptureThread::run() {
 
     QTemporaryFile *dst_file = QTemporaryFile::createNativeFile(src_fname);
     if(!dst_file) {
-        QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "app").warning()
+        QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "video").warning()
             << qPrintable(ACaptureThread::tr("Can not create temporary file!"));
 
         QMetaObject::invokeMethod(this, "failed", Qt::QueuedConnection);
@@ -136,7 +136,7 @@ void ACaptureThread::run() {
 
     cv::CascadeClassifier classifier;
     if(!classifier.load(dst_fname.toStdString())) {
-        QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "app").warning()
+        QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "video").warning()
             << qPrintable(ACaptureThread::tr("Load classifier failed!"));
 
         delete dst_file;
@@ -154,7 +154,7 @@ void ACaptureThread::run() {
         cv::Mat src_mat;
         capture >> src_mat;
         if(src_mat.empty()) {
-            QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "app").warning()
+            QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "video").warning()
                 << qPrintable(ACaptureThread::tr(
                     "Capturing with device %1 failed!")
                     .arg(dev_idx));
