@@ -33,7 +33,8 @@ SOURCES += main.cpp \
     requests/alogoutftcomrequest.cpp \
     requests/asyncftcomrequest.cpp \
     requests/aversionftcomrequest.cpp \
-    requests/arssftcomrequest.cpp
+    requests/arssftcomrequest.cpp \
+    widgets/asliderwidget.cpp
 
 HEADERS += \
     helpers/asettingshelper.h \
@@ -60,7 +61,8 @@ HEADERS += \
     requests/alogoutftcomrequest.h \
     requests/asyncftcomrequest.h \
     requests/aversionftcomrequest.h \
-    requests/arssftcomrequest.h
+    requests/arssftcomrequest.h \
+    widgets/asliderwidget.h
 
 unix {
     INCLUDEPATH += /usr/include/libappindicator-0.1 \
