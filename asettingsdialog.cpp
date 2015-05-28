@@ -114,11 +114,19 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     working_period_label->setText(
         ASettingsDialog::tr("No more in front\nof webcamera:"));
 
+    const int working_period
+        = ASettingsHelper::value(QStringLiteral("working-period"), 30).toInt();
+
     _working_period_spbox = new QSpinBox(this);
     _working_period_spbox->setSuffix(ASettingsDialog::tr(" min."));
     _working_period_spbox->setRange(1,60);
-    _working_period_spbox->setValue(
-        ASettingsHelper::value(QStringLiteral("working-period"), 30).toInt());
+    _working_period_spbox->setValue(working_period);
+    connect(_working_period_spbox
+        , static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged)
+        , [this](int value) {
+        ASettingsHelper::setValue(QStringLiteral("working-period")
+            , QVariant(value));
+    });
 
     const QString registration_link
         = ASettingsHelper::value(QStringLiteral("registration-link"))
