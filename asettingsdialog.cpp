@@ -28,9 +28,18 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     setWindowTitle(ASettingsDialog::tr("Settings"));
 
     _capture->setCaptureHidden(false);
+
+    AImageWidget *img_wdg = new AImageWidget(this);
+    img_wdg->setMinimumSize(160,120);
+    connect(_capture, SIGNAL(captured(const QImage&))
+        , img_wdg, SLOT(updateImage(const QImage&)));
+    connect(_capture, SIGNAL(detected(const QRect&))
+        , img_wdg, SLOT(updateRoi(const QRect&)));
+
     QMetaObject::invokeMethod(_capture, "start", Qt::QueuedConnection);
 
     QLabel *lang_label = new QLabel(this);
+    lang_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     lang_label->setText(ASettingsDialog::tr("Language:"));
 
     const QString locale
@@ -43,17 +52,20 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     _lang_cbox->setCurrentIndex(_lang_cbox->findData(locale));
 
     QLabel *user_label = new QLabel(this);
+    user_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     user_label->setText(ASettingsDialog::tr("Username:"));
 
     _user_ledit = new QLineEdit(this);
 
     QLabel *pswd_label = new QLabel(this);
+    pswd_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     pswd_label->setText(ASettingsDialog::tr("Password:"));
 
     _pswd_ledit = new QLineEdit(this);
     _pswd_ledit->setEchoMode(QLineEdit::Password);
 
     QLabel *working_period_label = new QLabel(this);
+    working_period_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     working_period_label->setText(
         ASettingsDialog::tr("No more in front\nof webcamera:"));
 
@@ -104,14 +116,8 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
         ASettingsDialog::tr("Statistic available" \
         " <a href=\"%1\">at link</a>.").arg(statistic_link));
 
-    AImageWidget *img_wdg = new AImageWidget(this);
-    img_wdg->setMinimumSize(160,120);
-    connect(_capture, SIGNAL(captured(const QImage&))
-        , img_wdg, SLOT(updateImage(const QImage&)));
-    connect(_capture, SIGNAL(detected(const QRect&))
-        , img_wdg, SLOT(updateRoi(const QRect&)));
-
     _rss_label = new QLabel(this);
+    _rss_label->setAlignment(Qt::AlignTop);
     _rss_label->setWordWrap(true);
     _rss_label->setOpenExternalLinks(true);
     QMetaObject::invokeMethod(AServiceController::instance()
@@ -121,26 +127,21 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     rss_area->setWidgetResizable(true);
     rss_area->setWidget(_rss_label);
 
-    QSplitter *splitter = new QSplitter(this);
-    splitter->setChildrenCollapsible(false);
-    splitter->setOrientation(Qt::Vertical);
-    splitter->addWidget(img_wdg);
-    splitter->addWidget(rss_area);
-
     QGridLayout *layout = new QGridLayout();
-    layout->addWidget(lang_label, 0, 0, 1, 1);
-    layout->addWidget(_lang_cbox, 0, 1, 1, 2);
-    layout->addWidget(user_label, 1, 0, 1, 1);
-    layout->addWidget(_user_ledit, 1, 1, 1, 2);
-    layout->addWidget(pswd_label, 2, 0, 1, 1);
-    layout->addWidget(_pswd_ledit, 2, 1, 1, 2);
-    layout->addWidget(working_period_label, 3, 0, 1, 1);
-    layout->addWidget(_working_period_spbox, 3, 1, 1, 1);
-    layout->addWidget(_register_label, 1, 3, 1, 1);
-    layout->addWidget(_login_pbut, 2, 3, 1, 1);
-    layout->addWidget(statistic_label, 4, 1, 1, 2);
-    layout->addWidget(splitter, 5, 0, 1, 4);
-    layout->setColumnStretch(2,2);
+    layout->addWidget(img_wdg, 0, 0, 6, 1);
+    layout->addWidget(lang_label, 0, 1, 1, 1);
+    layout->addWidget(_lang_cbox, 0, 2, 1, 2);
+    layout->addWidget(user_label, 1, 1, 1, 1);
+    layout->addWidget(_user_ledit, 1, 2, 1, 2);
+    layout->addWidget(pswd_label, 2, 1, 1, 1);
+    layout->addWidget(_pswd_ledit, 2, 2, 1, 2);
+    layout->addWidget(working_period_label, 3, 1, 1, 1);
+    layout->addWidget(_working_period_spbox, 3, 2, 1, 1);
+    layout->addWidget(_register_label, 1, 4, 1, 1);
+    layout->addWidget(_login_pbut, 2, 4, 1, 1);
+    layout->addWidget(statistic_label, 4, 2, 1, 3);
+    layout->addWidget(rss_area, 5, 1, 1, 4);
+    layout->setColumnStretch(3,2);
 
     setLayout(layout);
 
