@@ -29,6 +29,16 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
 
     setWindowTitle(ASettingsDialog::tr("Settings"));
 
+    const int obj_min_size
+        = ASettingsHelper::value(QStringLiteral("object-min-size")
+            , QVariant(20)).toInt();
+
+    const int obj_max_size
+        = ASettingsHelper::value(QStringLiteral("object-max-size")
+            , QVariant(50)).toInt();
+
+    _capture->setDetectorMinSize(obj_min_size);
+    _capture->setDetectorMaxSize(obj_max_size);
     _capture->setCaptureHidden(false);
 
     AImageWidget *img_wdg = new AImageWidget(this);
@@ -41,10 +51,24 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     ASliderWidget *obj_min_slider_wdg = new ASliderWidget(this);
     obj_min_slider_wdg->setPrefix(ASettingsDialog::tr("minimum: "));
     obj_min_slider_wdg->setSuffix(QStringLiteral(" %"));
+    obj_min_slider_wdg->setRange(1,99);
+    obj_min_slider_wdg->setValue(obj_min_size);
+    connect(obj_min_slider_wdg, &ASliderWidget::valueChanged, [this](int min) {
+        _capture->setDetectorMinSize(min);
+        ASettingsHelper::setValue(QStringLiteral("object-min-size")
+            , QVariant(min));
+    });
 
     ASliderWidget *obj_max_slider_wdg = new ASliderWidget(this);
     obj_max_slider_wdg->setPrefix(ASettingsDialog::tr("maximum: "));
     obj_max_slider_wdg->setSuffix(QStringLiteral(" %"));
+    obj_max_slider_wdg->setRange(1,99);
+    obj_max_slider_wdg->setValue(obj_max_size);
+    connect(obj_max_slider_wdg, &ASliderWidget::valueChanged, [this](int max) {
+        _capture->setDetectorMaxSize(max);
+        ASettingsHelper::setValue(QStringLiteral("object-max-size")
+            , QVariant(max));
+    });
 
     QGroupBox *obj_grp_box = new QGroupBox(this);
     obj_grp_box->setTitle(ASettingsDialog::tr("Object size:"));
