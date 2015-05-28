@@ -201,6 +201,9 @@ void ASessionController::exportDetectionPeriods() {
 
     QMetaObject::invokeMethod(AServiceController::instance()->statistic()
         , "submitAll", Qt::QueuedConnection);
+
+    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "video").debug()
+        << qPrintable(ASessionController::tr("Period synced."));
 }
 
 
@@ -209,6 +212,9 @@ void ASessionController::exportDetectionPeriods() {
 // ========================================================================== //
 void ASessionController::onFaceIn() {
     _detections.append(qMakePair(QDateTime::currentMSecsSinceEpoch(),true));
+
+    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "video").debug()
+        << qPrintable(ASessionController::tr("Face detected."));
 
     cleanDetections();
 
@@ -225,6 +231,9 @@ void ASessionController::onFaceIn() {
 // ========================================================================== //
 void ASessionController::onFaceOut() {
     _detections.append(qMakePair(QDateTime::currentMSecsSinceEpoch(),false));
+
+    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "video").debug()
+        << qPrintable(ASessionController::tr("Face out."));
 
     emit grayActivated();
 
