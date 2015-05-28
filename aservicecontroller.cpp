@@ -134,7 +134,7 @@ AServiceController::AServiceController(QObject *parent)
     , _one_min_timer(new QTimer(this))
     , _qt_tr(NULL), _app_tr(NULL) {
 
-    //qInstallMessageHandler(handleMessage);
+    qInstallMessageHandler(handleMessage);
 
     AServiceMetatypeController::registerMetaTypes();
 
