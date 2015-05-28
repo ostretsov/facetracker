@@ -83,7 +83,7 @@ void ARequest::onReplyReadyRead() {
     if(reply->hasRawHeader("Server-Time")) {
         bool ok = false;
         const qint64 ts = reply->rawHeader("Server-Time").toLongLong(&ok);
-        if(ok) emit serverTime(ts);
+        if(ok) emit serverTime(ts * 1000);
     }
 
     QByteArray data = reply->readAll();

@@ -53,8 +53,7 @@ QChar messageTypeToChar(QtMsgType type) {
 void handleMessage(QtMsgType type, const QMessageLogContext &ctx
     , const QString &msg) {
 
-    if(QLatin1String(ctx.category) == QLatin1String("video")
-        || QLatin1String(ctx.category) == QLatin1String("network"))
+    if(QLatin1String(ctx.category) == QLatin1String("video"))
         AServiceController::instance()->showMessage(msg);
 
     if(AServiceController::instance()->isDatabaseOpened()) {
@@ -354,7 +353,7 @@ void AServiceController::sync() {
     connect(request, &ASyncFtcomRequest::serverTime
         , [this](const qint64 &ts) {
         _session_ctrl->setRemoteDeltaTimeStamp(
-            QDateTime::currentMSecsSinceEpoch()-ts);
+            ts-QDateTime::currentMSecsSinceEpoch());
     });
 
     connect(request, &ASyncFtcomRequest::message
@@ -399,11 +398,11 @@ void AServiceController::sync() {
 
             hash.insert(QStringLiteral("period_from")
                 , QByteArray::number(model->data(period_from_index)
-                    .toLongLong()));
+                    .toLongLong()/1000));
 
             hash.insert(QStringLiteral("period_to")
                 , QByteArray::number(model->data(period_to_index)
-                    .toLongLong()));
+                    .toLongLong()/1000));
 
             if(model->data(is_extra_time_index).toInt() == 1)
                 hash.insert(QStringLiteral("is_extra_time"), "on");
