@@ -2,6 +2,7 @@
 
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QGroupBox>
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QLineEdit>
@@ -11,6 +12,7 @@
 
 #include "database/atablecontroller.h"
 
+#include "widgets/asliderwidget.h"
 #include "widgets/aimagewidget.h"
 
 #include "helpers/asettingshelper.h"
@@ -36,7 +38,26 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
     connect(_capture, SIGNAL(detected(const QRect&))
         , img_wdg, SLOT(updateRoi(const QRect&)));
 
+    ASliderWidget *obj_min_slider_wdg = new ASliderWidget(this);
+    obj_min_slider_wdg->setPrefix(ASettingsDialog::tr("minimum: "));
+    obj_min_slider_wdg->setSuffix(QStringLiteral(" %"));
+
+    ASliderWidget *obj_max_slider_wdg = new ASliderWidget(this);
+    obj_max_slider_wdg->setPrefix(ASettingsDialog::tr("maximum: "));
+    obj_max_slider_wdg->setSuffix(QStringLiteral(" %"));
+
+    QGroupBox *obj_grp_box = new QGroupBox(this);
+    obj_grp_box->setTitle(ASettingsDialog::tr("Object size:"));
+    obj_grp_box->setLayout(new QVBoxLayout());
+    obj_grp_box->layout()->setMargin(4);
+    obj_grp_box->layout()->setSpacing(4);
+    obj_grp_box->layout()->addWidget(obj_min_slider_wdg);
+    obj_grp_box->layout()->addWidget(obj_max_slider_wdg);
+
     QMetaObject::invokeMethod(_capture, "start", Qt::QueuedConnection);
+
+    QLabel *vline_label = new QLabel(this);
+    vline_label->setFrameStyle(QFrame::VLine|QFrame::Sunken);
 
     QLabel *lang_label = new QLabel(this);
     lang_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
@@ -129,19 +150,22 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
 
     QGridLayout *layout = new QGridLayout();
     layout->addWidget(img_wdg, 0, 0, 6, 1);
-    layout->addWidget(lang_label, 0, 1, 1, 1);
-    layout->addWidget(_lang_cbox, 0, 2, 1, 2);
-    layout->addWidget(user_label, 1, 1, 1, 1);
-    layout->addWidget(_user_ledit, 1, 2, 1, 2);
-    layout->addWidget(pswd_label, 2, 1, 1, 1);
-    layout->addWidget(_pswd_ledit, 2, 2, 1, 2);
-    layout->addWidget(working_period_label, 3, 1, 1, 1);
-    layout->addWidget(_working_period_spbox, 3, 2, 1, 1);
-    layout->addWidget(_register_label, 1, 4, 1, 1);
-    layout->addWidget(_login_pbut, 2, 4, 1, 1);
-    layout->addWidget(statistic_label, 4, 2, 1, 3);
-    layout->addWidget(rss_area, 5, 1, 1, 4);
-    layout->setColumnStretch(3,2);
+    layout->addWidget(obj_grp_box, 6, 0, 1, 1);
+    layout->addWidget(vline_label, 0, 1, 7, 1);
+    layout->addWidget(lang_label, 0, 2, 1, 1);
+    layout->addWidget(_lang_cbox, 0, 3, 1, 2);
+    layout->addWidget(user_label, 1, 2, 1, 1);
+    layout->addWidget(_user_ledit, 1, 3, 1, 2);
+    layout->addWidget(pswd_label, 2, 2, 1, 1);
+    layout->addWidget(_pswd_ledit, 2, 3, 1, 2);
+    layout->addWidget(working_period_label, 3, 2, 1, 1);
+    layout->addWidget(_working_period_spbox, 3, 3, 1, 1);
+    layout->addWidget(_register_label, 1, 5, 1, 1);
+    layout->addWidget(_login_pbut, 2, 5, 1, 1);
+    layout->addWidget(statistic_label, 4, 3, 1, 3);
+    layout->addWidget(rss_area, 5, 2, 2, 4);
+
+    layout->setColumnStretch(4,2);
 
     setLayout(layout);
 
@@ -189,8 +213,9 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
 
     connect(_lang_cbox
         , static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged)
-        , [this, lang_label, user_label, pswd_label
-            , working_period_label, statistic_label](int idx) {
+        , [this, obj_grp_box, obj_min_slider_wdg, obj_max_slider_wdg, lang_label
+            , user_label, pswd_label, working_period_label
+            , statistic_label](int idx) {
 
         ASettingsHelper::setValue(QStringLiteral("locale")
             , _lang_cbox->itemData(idx));
@@ -198,6 +223,11 @@ ASettingsDialog::ASettingsDialog(QWidget *parent)
         AServiceController::instance()->installTranslator();
 
         setWindowTitle(ASettingsDialog::tr("Settings"));
+
+        obj_grp_box->setTitle(ASettingsDialog::tr("Object size:"));
+        obj_min_slider_wdg->setPrefix(ASettingsDialog::tr("minimum: "));
+        obj_max_slider_wdg->setPrefix(ASettingsDialog::tr("maximum: "));
+
         lang_label->setText(ASettingsDialog::tr("Language:"));
         user_label->setText(ASettingsDialog::tr("Username:"));
         pswd_label->setText(ASettingsDialog::tr("Password:"));
