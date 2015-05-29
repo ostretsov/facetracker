@@ -60,6 +60,44 @@ bool ASqlTableController::appendRow(const QVariantHash &hash) {
 
 
 // ========================================================================== //
+// Append row immediately.
+// ========================================================================== //
+bool ASqlTableController::appendRowImmediately(const QVariantHash &hash) {
+    if(hash.isEmpty()) return false;
+
+    QSqlTableModel *model = qobject_cast<QSqlTableModel*>(this->model());
+    if(!model) return false;
+
+    QList<QString> field_names = fieldNames();
+
+    QHashIterator<QString,QVariant> hash_iter(hash);
+    while(hash_iter.hasNext()) {
+        hash_iter.next();
+
+        if(!field_names.contains(hash_iter.key()))
+            field_names.removeOne(hash_iter.key());
+    }
+
+    if(field_names.isEmpty()) return false;
+
+    QSqlRecord record;
+
+    QListIterator<QString> field_names_iter(field_names);
+    while(field_names_iter.hasNext()) {
+        const QString &field_name = field_names_iter.next();
+        const QVariant field_value = hash.value(field_name);
+
+        QSqlField field(field_name, field_value.type());
+        field.setValue(field_value);
+
+        record.append(field);
+    }
+
+    return model->insertRecord(-1, record);
+}
+
+
+// ========================================================================== //
 // Get data.
 // ========================================================================== //
 QVariant ASqlTableController::data(int key_id

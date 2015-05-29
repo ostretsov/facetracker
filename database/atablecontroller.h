@@ -28,6 +28,9 @@ class ATableController : public QObject {
         //! Append row.
         virtual bool appendRow(const QVariantHash &hash) = 0;
 
+        //! Append row immediately.
+        virtual bool appendRowImmediately(const QVariantHash &hash) = 0;
+
     public slots:
         //! Submit all.
         virtual bool submitAll() = 0;

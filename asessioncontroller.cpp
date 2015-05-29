@@ -110,7 +110,7 @@ void ASessionController::stop() {
     if(_face_ctrl->isRunning())
         _face_ctrl->stop();
 
-    _detections.clear();
+    cleanDetections(); exportDetectionPeriods(false);
 
     emit grayActivated();
 }
@@ -143,17 +143,27 @@ void ASessionController::cleanDetections() {
 // ========================================================================== //
 // Export detection periods.
 // ========================================================================== //
-void ASessionController::exportDetectionPeriods() {
+void ASessionController::exportDetectionPeriods(bool check_faceout) {
     if(_detections.isEmpty()) return;
 
     QList<QPair<qint64,bool> > period;
-    for(int i = 2; i < _detections.size(); ++i) {
-        if(!_detections.at(i-1).second && !_detections.at(i).second) {
-            for(int ii = 0, nn = i-1; ii < nn; ++ii)
-                period.append(_detections.takeFirst());
+    if(check_faceout) {
+        for(int i = 2; i < _detections.size(); ++i) {
+            if(!_detections.at(i-1).second && !_detections.at(i).second) {
+                for(int ii = 0, nn = i-1; ii < nn; ++ii)
+                    period.append(_detections.takeFirst());
 
-            break;
+                break;
+            }
         }
+
+    } else {
+        for(int i = 0; i < _detections.size(); ++i) {
+            if(_detections.at(i).second)
+                period.append(_detections.at(i));
+        }
+
+        _detections.clear();
     }
 
     if(period.isEmpty()) return;
@@ -185,7 +195,9 @@ void ASessionController::exportDetectionPeriods() {
     hash.insert(QStringLiteral("is_extra_time"), 0);
     hash.insert(QStringLiteral("is_synced"), 0);
 
-    AServiceController::instance()->statistic()->appendRow(hash);
+    ATableController *stat_ctrl = AServiceController::instance()->statistic();
+    if(check_faceout) stat_ctrl->appendRow(hash);
+    else stat_ctrl->appendRowImmediately(hash);
 
     if(edge != -1) {
         hash[QStringLiteral("period_from")]
@@ -196,14 +208,15 @@ void ASessionController::exportDetectionPeriods() {
 
         hash[QStringLiteral("is_extra_time")] = 1;
 
-        AServiceController::instance()->statistic()->appendRow(hash);
+        if(check_faceout) stat_ctrl->appendRow(hash);
+        else stat_ctrl->appendRowImmediately(hash);
     }
 
-    QMetaObject::invokeMethod(AServiceController::instance()->statistic()
-        , "submitAll", Qt::QueuedConnection);
+    if(check_faceout) {
+        QMetaObject::invokeMethod(stat_ctrl, "submitAll"
+            , Qt::QueuedConnection);
 
-    QMessageLogger(__FILE__, __LINE__, Q_FUNC_INFO, "video").debug()
-        << qPrintable(ASessionController::tr("Period synced."));
+    } else stat_ctrl->submitAll();
 }
 
 

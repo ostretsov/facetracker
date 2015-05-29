@@ -71,7 +71,7 @@ class ASessionController : public QObject {
         void cleanDetections();
 
         //! Export detection periods.
-        void exportDetectionPeriods();
+        void exportDetectionPeriods(bool check_faceout = true);
 
     private slots:
         //! On face in.

@@ -34,6 +34,9 @@ class ASqlTableController : public ATableController {
         //! Append row.
         virtual bool appendRow(const QVariantHash &hash);
 
+        //! Append row immediately.
+        virtual bool appendRowImmediately(const QVariantHash &hash);
+
         //! Get data.
         virtual QVariant data(int key_id, const QString &field_name) const;
 
