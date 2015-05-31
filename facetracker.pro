@@ -64,6 +64,8 @@ HEADERS += \
     requests/arssftcomrequest.h \
     widgets/asliderwidget.h
 
+DEFINES += __STDC_CONSTANT_MACROS
+
 unix {
     INCLUDEPATH += /usr/include/libappindicator-0.1 \
         /usr/include/gtk-2.0 \
@@ -82,19 +84,27 @@ unix {
 
     CONFIG += link_pkgconfig
 
-    PKGCONFIG += gtk+-2.0 opencv
+    PKGCONFIG += gtk+-2.0 opencv \
+        libavdevice libavutil libavformat libavcodec libswscale
 }
 
 win32 {
-    INCLUDEPATH += $$PWD/../opencv/build/x86/mingw4.9.1/install/include
+    INCLUDEPATH += $$PWD/../opencv/build/x86/mingw4.9.1/install/include \
+        $$PWD/../ffmpeg/include
 
     LIBS += -L$$PWD/../opencv/build/x86/mingw4.9.1/bin/ \
+        -L$$PWD/../ffmpeg/bin/ \
         -lopencv_core300 \
         -lopencv_imgproc300 \
         -lopencv_imgcodecs300 \
         -lopencv_objdetect300 \
         -lopencv_videoio300 \
-        -lopencv_highgui300
+        -lopencv_highgui300 \
+        -lavdevice-56 \
+        -lavformat-56 \
+        -lavutil-54 \
+        -lavcodec-56 \
+        -lswscale-3
 }
 
 RESOURCES += \
