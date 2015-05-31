@@ -23,6 +23,12 @@ class ACaptureThread : public QThread {
         //! Destructor.
         virtual ~ACaptureThread() {}
 
+        //! Get device name.
+        QString deviceName();
+
+        //! Get device input format name.
+        QString deviceFormatName();
+
         //! Get detector classifier file name.
         QString detectorClassifier();
 
@@ -39,6 +45,12 @@ class ACaptureThread : public QThread {
         bool isHiddenDetect();
 
     public slots:
+        //! Set device name.
+        void setDeviceName(const QString &name);
+
+        //! Set device input format name.
+        void setDeviceFormatName(const QString &name);
+
         //! Set detector classifier file name.
         void setDetectorClassifier(const QString &fname);
 
@@ -59,7 +71,7 @@ class ACaptureThread : public QThread {
         virtual void run();
 
     private:
-        int _dev_idx;
+        QString _dev_name, _dev_fmt_name;
 
         QString _det_fname;
 

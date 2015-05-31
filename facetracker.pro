@@ -98,8 +98,6 @@ win32 {
         -lopencv_imgproc300 \
         -lopencv_imgcodecs300 \
         -lopencv_objdetect300 \
-        -lopencv_videoio300 \
-        -lopencv_highgui300 \
         -lavdevice-56 \
         -lavformat-56 \
         -lavutil-54 \

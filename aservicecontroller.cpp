@@ -1,3 +1,8 @@
+extern "C" {
+    #include <libavdevice/avdevice.h>
+    #include <libavformat/avformat.h>
+}
+
 #include <QtCore/QAbstractTableModel>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QGlobalStatic>
@@ -133,6 +138,9 @@ AServiceController::AServiceController(QObject *parent)
     , _nam(new QNetworkAccessManager(this))
     , _one_min_timer(new QTimer(this))
     , _qt_tr(NULL), _app_tr(NULL) {
+
+    av_register_all();
+    avdevice_register_all();
 
     qInstallMessageHandler(handleMessage);
 
