@@ -4,20 +4,59 @@
 <context>
     <name>ACaptureThread</name>
     <message>
-        <location filename="acapturethread.cpp" line="113"/>
-        <location filename="acapturethread.cpp" line="158"/>
         <source>Capturing with device %1 failed!</source>
-        <translation>Ошибка загрузки устройства видеозахвата %1!</translation>
+        <translation type="vanished">Ошибка загрузки устройства видеозахвата %1!</translation>
     </message>
     <message>
-        <location filename="acapturethread.cpp" line="128"/>
+        <location filename="acapturethread.cpp" line="154"/>
+        <source>Unable to find input video format &quot;%1&quot;!</source>
+        <translation>Не обнаружено видеоустройство формата &quot;%1&quot;!</translation>
+    </message>
+    <message>
+        <location filename="acapturethread.cpp" line="172"/>
+        <source>Unable to open video device &quot;%1&quot;!</source>
+        <translation>Ошибка при открытии видеоустройства &quot;%1&quot;!</translation>
+    </message>
+    <message>
+        <location filename="acapturethread.cpp" line="184"/>
+        <location filename="acapturethread.cpp" line="202"/>
+        <source>Unable to find video stream!</source>
+        <translation>Не обнаружен видеопоток!</translation>
+    </message>
+    <message>
+        <location filename="acapturethread.cpp" line="216"/>
+        <source>Unable to find video decoder!</source>
+        <translation>Не обнаружен видеокодек!</translation>
+    </message>
+    <message>
+        <location filename="acapturethread.cpp" line="227"/>
+        <source>Unable to open video decoder!</source>
+        <translation>Ошибка при открытии видеокодека!</translation>
+    </message>
+    <message>
+        <location filename="acapturethread.cpp" line="248"/>
+        <source>Unable to open cached context!</source>
+        <translation>Ошибка при открытии контекста!</translation>
+    </message>
+    <message>
+        <location filename="acapturethread.cpp" line="266"/>
+        <source>Unable to open capture frame!</source>
+        <translation>Ошибка при инициализации видеокадра!</translation>
+    </message>
+    <message>
+        <location filename="acapturethread.cpp" line="288"/>
         <source>Can not create temporary file!</source>
         <translation>Невозможно создать временный файл!</translation>
     </message>
     <message>
-        <location filename="acapturethread.cpp" line="140"/>
+        <location filename="acapturethread.cpp" line="308"/>
         <source>Load classifier failed!</source>
         <translation>Ошибка загрузки классификатора!</translation>
+    </message>
+    <message>
+        <location filename="acapturethread.cpp" line="329"/>
+        <source>Capturing failed!</source>
+        <translation>Ошибка видеозахвата!</translation>
     </message>
 </context>
 <context>
@@ -107,95 +146,108 @@
 <context>
     <name>AServiceController</name>
     <message>
-        <location filename="aservicecontroller.cpp" line="230"/>
-        <location filename="aservicecontroller.cpp" line="624"/>
+        <location filename="aservicecontroller.cpp" line="238"/>
+        <location filename="aservicecontroller.cpp" line="632"/>
         <source>Settings...</source>
         <translation>Параметры...</translation>
     </message>
     <message>
-        <location filename="aservicecontroller.cpp" line="231"/>
-        <location filename="aservicecontroller.cpp" line="629"/>
+        <location filename="aservicecontroller.cpp" line="239"/>
+        <location filename="aservicecontroller.cpp" line="637"/>
         <source>Quit</source>
         <translation>Выйти</translation>
     </message>
     <message>
-        <location filename="aservicecontroller.cpp" line="475"/>
+        <location filename="aservicecontroller.cpp" line="483"/>
         <source>Available new application version %1!</source>
         <translation>Доступна новая версия приложения %1!</translation>
     </message>
     <message>
-        <location filename="aservicecontroller.cpp" line="735"/>
+        <location filename="aservicecontroller.cpp" line="743"/>
         <source>It is time to afford to rest!</source>
         <translation>Пора позволить себе отдохнуть!</translation>
+    </message>
+</context>
+<context>
+    <name>ASessionController</name>
+    <message>
+        <location filename="asessioncontroller.cpp" line="230"/>
+        <source>Face detected.</source>
+        <translation>Лицо обнаружено.</translation>
+    </message>
+    <message>
+        <location filename="asessioncontroller.cpp" line="249"/>
+        <source>Face out.</source>
+        <translation>Лицо не обнаружено.</translation>
     </message>
 </context>
 <context>
     <name>ASettingsDialog</name>
     <message>
         <location filename="asettingsdialog.cpp" line="30"/>
-        <location filename="asettingsdialog.cpp" line="225"/>
+        <location filename="asettingsdialog.cpp" line="257"/>
         <source>Settings</source>
         <translation>Параметры</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="42"/>
-        <location filename="asettingsdialog.cpp" line="228"/>
+        <location filename="asettingsdialog.cpp" line="52"/>
+        <location filename="asettingsdialog.cpp" line="260"/>
         <source>minimum: </source>
         <translation>минимум: </translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="46"/>
-        <location filename="asettingsdialog.cpp" line="229"/>
+        <location filename="asettingsdialog.cpp" line="63"/>
+        <location filename="asettingsdialog.cpp" line="261"/>
         <source>maximum: </source>
         <translation>максимум: </translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="50"/>
-        <location filename="asettingsdialog.cpp" line="227"/>
+        <location filename="asettingsdialog.cpp" line="74"/>
+        <location filename="asettingsdialog.cpp" line="259"/>
         <source>Object size:</source>
         <translation>Размер объекта:</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="64"/>
-        <location filename="asettingsdialog.cpp" line="231"/>
+        <location filename="asettingsdialog.cpp" line="88"/>
+        <location filename="asettingsdialog.cpp" line="263"/>
         <source>Language:</source>
         <translation>Интерфейс:</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="77"/>
-        <location filename="asettingsdialog.cpp" line="232"/>
+        <location filename="asettingsdialog.cpp" line="101"/>
+        <location filename="asettingsdialog.cpp" line="264"/>
         <source>Username:</source>
         <translation>Логин:</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="83"/>
-        <location filename="asettingsdialog.cpp" line="233"/>
+        <location filename="asettingsdialog.cpp" line="107"/>
+        <location filename="asettingsdialog.cpp" line="265"/>
         <source>Password:</source>
         <translation>Пароль:</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="91"/>
-        <location filename="asettingsdialog.cpp" line="236"/>
+        <location filename="asettingsdialog.cpp" line="115"/>
+        <location filename="asettingsdialog.cpp" line="268"/>
         <source>No more in front
 of webcamera:</source>
         <translation>Перед веб-камерой
 не более:</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="94"/>
-        <location filename="asettingsdialog.cpp" line="237"/>
+        <location filename="asettingsdialog.cpp" line="121"/>
+        <location filename="asettingsdialog.cpp" line="269"/>
         <source> min.</source>
         <translation> мин.</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="108"/>
-        <location filename="asettingsdialog.cpp" line="246"/>
+        <location filename="asettingsdialog.cpp" line="140"/>
+        <location filename="asettingsdialog.cpp" line="278"/>
         <source>Register</source>
         <translation>Регистрация</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="137"/>
-        <location filename="asettingsdialog.cpp" line="263"/>
+        <location filename="asettingsdialog.cpp" line="169"/>
+        <location filename="asettingsdialog.cpp" line="295"/>
         <source>Statistic available &lt;a href=&quot;%1&quot;&gt;at link&lt;/a&gt;.</source>
         <translation>Статистика доступна &lt;a href=&quot;%1&quot;&gt;по ссылке&lt;/a&gt;.</translation>
     </message>
@@ -204,16 +256,16 @@ of webcamera:</source>
         <translation type="vanished">Статистика доступна &lt;a href=&quot;http://google.ru&quot;&gt;по ссылке&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="199"/>
-        <location filename="asettingsdialog.cpp" line="250"/>
-        <location filename="asettingsdialog.cpp" line="323"/>
+        <location filename="asettingsdialog.cpp" line="231"/>
+        <location filename="asettingsdialog.cpp" line="282"/>
+        <location filename="asettingsdialog.cpp" line="355"/>
         <source>Logout</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="asettingsdialog.cpp" line="204"/>
-        <location filename="asettingsdialog.cpp" line="254"/>
-        <location filename="asettingsdialog.cpp" line="328"/>
+        <location filename="asettingsdialog.cpp" line="236"/>
+        <location filename="asettingsdialog.cpp" line="286"/>
+        <location filename="asettingsdialog.cpp" line="360"/>
         <source>Login</source>
         <translation>Авторизация</translation>
     </message>
@@ -224,7 +276,7 @@ of webcamera:</source>
         <location filename="amessagessqltablecontroller.cpp" line="78"/>
         <location filename="arsssqltablecontroller.cpp" line="71"/>
         <location filename="astatisticsqltablecontroller.cpp" line="74"/>
-        <location filename="database/asqltablecontroller.cpp" line="171"/>
+        <location filename="database/asqltablecontroller.cpp" line="209"/>
         <source>Query: &quot;%1&quot;; error: &quot;%2&quot;</source>
         <translation>Запрос: &quot;%1&quot;; ошибка: &quot;%2&quot;</translation>
     </message>
