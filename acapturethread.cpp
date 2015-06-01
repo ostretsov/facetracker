@@ -164,7 +164,7 @@ void ACaptureThread::run() {
     const QString dev_name = _dev_name;
     _mutex.unlock();
 
-    AVFormatContext *av_fmt_ctx;
+    AVFormatContext *av_fmt_ctx = NULL;
     if(avformat_open_input(&av_fmt_ctx, dev_name.toLatin1()
         , av_inp_fmt, NULL) < 0) {
 
