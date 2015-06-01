@@ -43,7 +43,8 @@ AFaceController::AFaceController(QObject *parent) : QObject(parent) {
     connect(detection2_state, SIGNAL(entered()), _timer, SLOT(start()));
 
     QState *fail_state = new QState(_machine);
-    connect(fail_state, SIGNAL(entered()), this, SLOT(stop()));
+    connect(fail_state, SIGNAL(entered()), this, SLOT(stop())
+        , Qt::QueuedConnection);
 
     QFinalState *face_in_state = new QFinalState(_machine);
     connect(face_in_state, SIGNAL(entered()), _timer, SLOT(stop()));
