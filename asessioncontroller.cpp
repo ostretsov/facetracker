@@ -39,7 +39,7 @@ ASessionController::ASessionController(QObject *parent)
     connect(fail_state, SIGNAL(entered()), this, SLOT(stop()));
 
     work_state->addTransition(_face_ctrl
-        , SIGNAL(stopped()), fail_state);
+        , SIGNAL(stopped()), work_state);
     work_state->addTransition(_face_ctrl
         , SIGNAL(finished()), work_state);
 
